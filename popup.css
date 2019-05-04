@@ -1,0 +1,52 @@
+body {
+  width: 300px;
+  background-color: #181A1B;
+  color: white;
+  padding: 0px 10px;
+  font-size: 16px;
+}
+h2 {
+  margin-bottom: 5px;
+  text-align: center;
+}
+input {
+  display: block;
+  margin: 8px 0px;
+}
+input[type="number"] {
+  width: 100px;
+  padding: 8px 16px;
+  margin-top: 2px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+input[type="button"] {
+  background-color: #5cb85c;
+  border-radius: 6px;
+  border: none;
+  color: white;
+  font-weight: bold;
+  padding: 10px 16px;
+  text-align: center;
+  cursor: pointer;
+  outline: none;
+  -webkit-transition-duration: 0.4s;
+  transition-duration: 0.4s;
+}
+input[type="button"]:hover {
+  background-color: #449d44;
+}
+#go {
+  margin-top: 5px;
+}
+a:visited {
+  color: #337ab7;
+}
+a {
+  color: #337ab7;
+  text-decoration: none;
+}
+a:hover {
+  color: #23527c;
+}
