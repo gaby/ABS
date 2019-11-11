@@ -13,7 +13,7 @@ function startSearches(numIterations, delay) {
     let count = 0;
     return () => {
       chrome.tabs.update({
-        url: `https://bing.com?q=${Math.random().toString(36).substr(2)}`,
+        url: `https://bing.com/search?q=${Math.random().toString(36).substr(2)}`,
       });
       return ++count;
     };
