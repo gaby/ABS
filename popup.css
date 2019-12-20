@@ -50,3 +50,10 @@ a {
 a:hover {
   color: #23527c;
 }
+.option-wrapper {
+  margin-top: 10px;
+  display: flex;
+}
+.option-wrapper input {
+  margin-right: 5px;
+}

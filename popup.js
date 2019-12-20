@@ -48,3 +48,11 @@ document.getElementById('go').addEventListener('click', () => {
   );
 });
 document.getElementById('reset').addEventListener('click', reset);
+
+chrome.storage.sync.get(['autoClick'], ({ autoClick }) => {
+  document.getElementById('auto-click').checked = autoClick;
+});
+
+document.getElementById('auto-click').addEventListener('change', function() {
+  chrome.storage.sync.set({ autoClick: this.checked });
+});
