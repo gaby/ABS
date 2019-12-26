@@ -15,7 +15,7 @@ function clickLoop() {
   const startPlaying = document.querySelector('#rqStartQuiz');
   click(startPlaying);
 
-  const singleSelectQuizOption = document.querySelector('.rqOption:not(.optionDisable)');
+  const singleSelectQuizOption = document.querySelector('#currentQuestionContainer .rqOption:not(.optionDisable)');
   clickOption(singleSelectQuizOption);
 
   const pollOption = document.querySelector('.bt_poll .btOption');
