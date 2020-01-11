@@ -9,7 +9,7 @@ function click(e) {
 
 function clickLoop() {
   // TODO: this only works if at least one option has already been clicked. need to figure out why.
-  const multiSelectQuizOption = document.querySelector('.b_cards[iscorrectoption=True]:not(.btsel)');
+  const multiSelectQuizOption = document.querySelector('#currentQuestionContainer .b_cards[iscorrectoption=True]:not(.btsel)');
   clickOption(multiSelectQuizOption);
 
   const startPlaying = document.querySelector('#rqStartQuiz');
