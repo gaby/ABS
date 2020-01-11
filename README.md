@@ -1,4 +1,4 @@
-# AutomatedBingSearches
+# Automated Bing Searches
 Simple chrome extension to run a specific number of Bing searches by just clicking a button. This is useful for collecting Microsoft Reward Points.
 
 ![](/screenshots/popout.png)
