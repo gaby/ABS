@@ -20,6 +20,19 @@ function clickLoop() {
 
   const pollOption = document.querySelector('.bt_poll .btOption');
   clickOption(pollOption);
+
+  // for some reason, testYourSmartsOption.onmouseup returns null
+  // as a workaround, parse the search URL from the attribute and manually go to it
+  const testYourSmartsOption = document.querySelector('#ListOfQuestionAndAnswerPanes div[id^=QuestionPane]:not(.wk_hideCompulsary) .wk_paddingBtm');
+  if (testYourSmartsOption) {
+    let smartsLink = testYourSmartsOption.getAttribute('onmouseup');
+    if (smartsLink) smartsLink = smartsLink.substring(smartsLink.indexOf('/search'), smartsLink.length - 2);
+    window.location.href = `https://bing.com${smartsLink}`;
+  }
+
+  // this actually might not be necessary, but we can leave it in anyway
+  const testYourSmartsNextQuestion = document.querySelector('#ListOfQuestionAndAnswerPanes div[id^=AnswerPane]:not(.b_hide) input[type=submit]');
+  click(testYourSmartsNextQuestion);
 }
 
 const CLICK_DELAY = 500;
