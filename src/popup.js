@@ -1,14 +1,20 @@
 const DEFAULT_NUM_ITERATIONS = 30;
 const DEFAULT_DELAY = 600;
 
+const iterationCount = document.getElementById('iteration-count');
+const iterationCountWrapper = document.getElementById('iteration-count-wrapper');
+
 function saveChanges() {
-  chrome.storage.sync.set({
+  chrome.storage.local.set({
     numIterations: document.getElementById('numIterations').value,
     delay: document.getElementById('delay').value,
   });
 }
 
+let searchInterval;
 function startSearches(numIterations, delay) {
+  clearInterval(searchInterval);
+
   const search = (() => {
     let count = 0;
     return () => {
@@ -20,8 +26,18 @@ function startSearches(numIterations, delay) {
   })();
 
   search();
-  const interval = setInterval(() => {
-    if (search() >= numIterations) clearInterval(interval);
+  iterationCount.innerText = numIterations - 1;
+  iterationCountWrapper.style = 'display: flex;';
+
+  searchInterval = setInterval(() => {
+    const count = search();
+    if (count >= numIterations) {
+      clearInterval(searchInterval);
+      iterationCount.innerText = '';
+      iterationCountWrapper.style = 'display: none;';
+    } else {
+      iterationCount.innerText = numIterations - count;
+    }
   }, delay);
 }
 
@@ -32,7 +48,7 @@ function reset() {
 }
 
 // load the saved values from the Chrome extension storage API
-chrome.storage.sync.get(['numIterations', 'delay'], function(result) {
+chrome.storage.local.get(['numIterations', 'delay'], function(result) {
   const numIterations = result['numIterations'] || DEFAULT_NUM_ITERATIONS;
   const delay = result['delay'] || DEFAULT_DELAY;
   document.getElementById('numIterations').value = numIterations;
@@ -49,10 +65,10 @@ document.getElementById('go').addEventListener('click', () => {
 });
 document.getElementById('reset').addEventListener('click', reset);
 
-chrome.storage.sync.get(['autoClick'], ({ autoClick }) => {
+chrome.storage.local.get(['autoClick'], ({ autoClick }) => {
   document.getElementById('auto-click').checked = autoClick;
 });
 
 document.getElementById('auto-click').addEventListener('change', function() {
-  chrome.storage.sync.set({ autoClick: this.checked });
+  chrome.storage.local.set({ autoClick: this.checked });
 });

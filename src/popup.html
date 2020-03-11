@@ -8,18 +8,28 @@
   <body>
     <h2>Automated Bing Searches</h2>
 
-    Number of iterations:
-    <input type="number" min="1" max="70" id="numIterations">
-
-    Delay (milliseconds):
-    <input type="number" min="200" max="5000" step="200" id="delay">
-
-    <input type="button" value="Start searches!" id="go">
+    <div class="input-wrapper">
+      <div>
+        Number of iterations:
+        <input type="number" min="1" max="70" id="numIterations">
+    
+        Delay (milliseconds):
+        <input type="number" min="200" max="5000" step="200" id="delay">
+    
+        <input type="button" value="Start searches!" id="go">
+      </div>
+      <div id="iteration-count-wrapper">
+        <div>
+          Searches left...
+          <div id="iteration-count"></div>
+        </div>
+      </div>
+    </div>
 
     <a id="reset" href="">Reset to default values</a>
 
     <div class="option-wrapper">
-      <input id="auto-click" type="checkbox" /> [beta] Auto click UI elements, e.g. quiz options
+      <label><input id="auto-click" type="checkbox" /> Auto click UI elements, e.g. quiz options</label>
     </div>
 
     <script src="popup.js"></script>

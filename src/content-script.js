@@ -1,3 +1,7 @@
+let correctAnswer;
+document.addEventListener('CORRECT_ANSWER_RECEIVED', e => {
+  correctAnswer = e.detail;
+});
 
 function clickOption(e) {
   if (e && e.getAttribute('data-serpquery')) e.click();
@@ -8,14 +12,17 @@ function click(e) {
 }
 
 function clickLoop() {
+  const startPlaying = document.querySelector('#rqStartQuiz');
+  click(startPlaying);
+
   // TODO: this only works if at least one option has already been clicked. need to figure out why.
   const multiSelectQuizOption = document.querySelector('#currentQuestionContainer .b_cards[iscorrectoption=True]:not(.btsel)');
   clickOption(multiSelectQuizOption);
 
-  const startPlaying = document.querySelector('#rqStartQuiz');
-  click(startPlaying);
+  const whosOnTopQuizOption = document.querySelector(`#currentQuestionContainer .btOptionCard[data-option="${correctAnswer}"]`);
+  clickOption(whosOnTopQuizOption);
 
-  const singleSelectQuizOption = document.querySelector('#currentQuestionContainer .rqOption:not(.optionDisable)');
+  const singleSelectQuizOption = document.querySelector(`#currentQuestionContainer .rqOption:not(.optionDisable)[data-option="${correctAnswer}"]`);
   clickOption(singleSelectQuizOption);
 
   const pollOption = document.querySelector('.bt_poll .btOption');
@@ -38,7 +45,7 @@ function clickLoop() {
 const CLICK_DELAY = 500;
 let clickInterval;
 
-chrome.storage.sync.get(['autoClick'], ({ autoClick }) => {
+chrome.storage.local.get(['autoClick'], ({ autoClick }) => {
   if (autoClick) {
     clickInterval = setInterval(clickLoop, CLICK_DELAY);
   }
