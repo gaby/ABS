@@ -3,30 +3,25 @@ document.addEventListener('CORRECT_ANSWER_RECEIVED', e => {
   correctAnswer = e.detail;
 });
 
-function clickOption(e) {
+function clickOption(selector) {
+  const e = document.querySelector(selector);
   if (e && e.getAttribute('data-serpquery')) e.click();
 }
 
-function click(e) {
+function click(selector) {
+  const e = document.querySelector(selector);
   if (e) e.click();
 }
 
 function clickLoop() {
-  const startPlaying = document.querySelector('#rqStartQuiz');
-  click(startPlaying);
-
+  click('#rqStartQuiz');
   // TODO: this only works if at least one option has already been clicked. need to figure out why.
-  const multiSelectQuizOption = document.querySelector('#currentQuestionContainer .b_cards[iscorrectoption=True]:not(.btsel)');
-  clickOption(multiSelectQuizOption);
-
-  const whosOnTopQuizOption = document.querySelector(`#currentQuestionContainer .btOptionCard[data-option="${correctAnswer}"]`);
-  clickOption(whosOnTopQuizOption);
-
-  const singleSelectQuizOption = document.querySelector(`#currentQuestionContainer .rqOption:not(.optionDisable)[data-option="${correctAnswer}"]`);
-  clickOption(singleSelectQuizOption);
-
-  const pollOption = document.querySelector('.bt_poll .btOption');
-  clickOption(pollOption);
+  clickOption('#currentQuestionContainer .b_cards[iscorrectoption=True]:not(.btsel)');
+  // TODO: this doesn't work anymore for "this or that" because the window variable doesn't have the same value as the data-option
+  clickOption(`#currentQuestionContainer .btOptionCard[data-option="${correctAnswer}"]`);
+  clickOption(`#currentQuestionContainer .rqOption:not(.optionDisable)[data-option="${correctAnswer}"]`);
+  clickOption('.bt_poll .btOption');
+  click('#OptionBackground00.b_hide');
 
   // for some reason, testYourSmartsOption.onmouseup returns null
   // as a workaround, parse the search URL from the attribute and manually go to it
@@ -38,8 +33,7 @@ function clickLoop() {
   }
 
   // this actually might not be necessary, but we can leave it in anyway
-  const testYourSmartsNextQuestion = document.querySelector('#ListOfQuestionAndAnswerPanes div[id^=AnswerPane]:not(.b_hide) input[type=submit]');
-  click(testYourSmartsNextQuestion);
+  click('#ListOfQuestionAndAnswerPanes div[id^=AnswerPane]:not(.b_hide) input[type=submit]');
 }
 
 const CLICK_DELAY = 500;
