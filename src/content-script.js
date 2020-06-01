@@ -28,8 +28,13 @@ function clickLoop() {
   const testYourSmartsOption = document.querySelector('#ListOfQuestionAndAnswerPanes div[id^=QuestionPane]:not(.wk_hideCompulsary) .wk_paddingBtm');
   if (testYourSmartsOption) {
     let smartsLink = testYourSmartsOption.getAttribute('onmouseup');
-    if (smartsLink) smartsLink = smartsLink.substring(smartsLink.indexOf('/search'), smartsLink.length - 2);
-    window.location.href = `https://bing.com${smartsLink}`;
+    if (smartsLink) {
+      const startIndex = smartsLink.indexOf('/search');
+      if (startIndex !== -1) {
+        smartsLink = smartsLink.substring(startIndex, smartsLink.length - 2);
+        window.location.href = `https://bing.com${smartsLink}`;
+      }
+    }
   }
 
   // this actually might not be necessary, but we can leave it in anyway
