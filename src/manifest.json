@@ -5,7 +5,7 @@
   "manifest_version": 2,
   "icons": { "16": "icon16.png", "48": "icon48.png", "128": "icon128.png" },
   "content_scripts": [{
-    "matches": ["https://bing.com/*", "https://www.bing.com/*"],
+    "matches": ["https://bing.com/*", "https://www.bing.com/*", "https://account.microsoft.com/rewards/*"],
     "js": ["script-injector.js", "content-script.js"]
   }],
   "browser_action": {
@@ -13,6 +13,7 @@
   },
   "web_accessible_resources": ["window-variable-grabber.js"],
   "permissions": [
+    "tabs",
     "storage"
   ]
 }

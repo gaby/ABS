@@ -2,12 +2,13 @@ body {
   width: 300px;
   background-color: #424242;
   color: white;
-  padding: 0px 10px;
+  padding: 18px;
+  margin: 0px;
   font-size: 16px;
 }
 
 h2 {
-  margin-bottom: 5px;
+  margin: 0px 0px 10px 0px;
   text-align: center;
 }
 

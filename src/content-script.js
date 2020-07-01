@@ -3,17 +3,56 @@ document.addEventListener('CORRECT_ANSWER_RECEIVED', e => {
   correctAnswer = e.detail;
 });
 
-function clickOption(selector) {
-  const e = document.querySelector(selector);
+let shouldOpenRewardTasks;
+chrome.runtime.onMessage.addListener((request, sender, cb) => {
+  switch(request.type) {
+    case 'OPEN_REWARD_TASKS': {
+      shouldOpenRewardTasks = true;
+      break;
+    }
+    default: {
+      break;
+    }
+  }
+  cb(null);
+});
+
+function clickOption(selector, parent = document) {
+  const e = parent.querySelector(selector);
   if (e && e.getAttribute('data-serpquery')) e.click();
 }
 
-function click(selector) {
-  const e = document.querySelector(selector);
-  if (e) e.click();
+function clickElement(e) {
+  // e.offsetParent checks that the element (and its parents) do not have the style property 'display: none'
+  // https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetParent
+  // this will break if e has style property 'position: fixed', but that shouldn't happen
+  if (e && e.offsetParent) e.click();
+}
+
+function click(selector, parent = document) {
+  const e = parent.querySelector(selector);
+  clickElement(e);
+}
+
+function clickAll(selector, parent = document) {
+  const elements = [...parent.querySelectorAll(selector)];
+  elements.forEach(clickElement);
 }
 
 function clickLoop() {
+  if (shouldOpenRewardTasks) {
+    const cards = [...document.querySelectorAll('mee-card')];
+    if (cards.length) {
+      // we're actually on the rewards page now, so no need to keep trying to open tasks after this attempt
+      shouldOpenRewardTasks = false;
+      cards.forEach(card => {
+        if (card.querySelector('.mee-icon-AddMedium')) {
+          clickAll('a.c-call-to-action', card);
+        }
+      });
+    }
+  }
+
   click('#rqStartQuiz');
   // TODO: this only works if at least one option has already been clicked. need to figure out why.
   clickOption('#currentQuestionContainer .b_cards[iscorrectoption=True]:not(.btsel)');

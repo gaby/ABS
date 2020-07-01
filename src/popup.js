@@ -65,6 +65,31 @@ document.getElementById('go').addEventListener('click', () => {
 });
 document.getElementById('reset').addEventListener('click', reset);
 
+function openRewardTasks() {
+  chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+    chrome.tabs.sendMessage(tabs[0].id, { type: 'OPEN_REWARD_TASKS' });
+  });
+}
+
+document.getElementById('open-reward-tasks').addEventListener('click', () => {
+  chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+    const tab = tabs[0];
+    if (tab && tab.url.includes('https://account.microsoft.com/rewards')) {
+        openRewardTasks();
+    } else {
+      chrome.tabs.update({
+        url: 'https://account.microsoft.com/rewards',
+      }, () => {
+        // this 5s timeout is hack, but it works for the most part (unless your internet or browser speed is very slow)
+        // and even if it doesn't work, you just have to click the button again
+        setTimeout(() => {
+          openRewardTasks();
+        }, 5000);
+      });
+    }
+  });
+});
+
 chrome.storage.local.get(['autoClick'], ({ autoClick }) => {
   document.getElementById('auto-click').checked = autoClick;
 });
