@@ -83,13 +83,15 @@ function clickLoop() {
 const CLICK_DELAY = 500;
 let clickInterval;
 
-chrome.storage.local.get(['autoClick'], ({ autoClick }) => {
+chrome.storage.local.get(['autoClick'], results => {
+  // value could be false, in which case the shortcut || operator would evaluate to the default (not intended)
+  const autoClick = results.autoClick === undefined ? constants.DEFAULTS.AUTO_CLICK : results.autoClick;
   if (autoClick) {
     clickInterval = setInterval(clickLoop, CLICK_DELAY);
   }
 });
 
-chrome.storage.onChanged.addListener((changes) => {
+chrome.storage.onChanged.addListener(changes => {
   if (changes.autoClick) {
     if (changes.autoClick.newValue) {
       clickInterval = setInterval(clickLoop, CLICK_DELAY);
