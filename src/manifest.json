@@ -1,7 +1,7 @@
 {
   "name": "Automated Bing Searches",
   "description": "Click the button on the popout and do the random bing searches. Optionally change the # of iterations and delay between searches.",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "manifest_version": 2,
   "icons": { "16": "icon16.png", "48": "icon48.png", "128": "icon128.png" },
   "content_scripts": [{
