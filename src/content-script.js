@@ -17,6 +17,8 @@ chrome.runtime.onMessage.addListener((request, sender, cb) => {
   cb(null);
 });
 
+let randomGuesses;
+
 function clickOption(selector, parent = document) {
   const e = parent.querySelector(selector);
   if (e && e.getAttribute('data-serpquery')) e.click();
@@ -54,13 +56,15 @@ function clickLoop() {
   }
 
   click('#rqStartQuiz');
-  // TODO: this only works if at least one option has already been clicked. need to figure out why.
   clickOption('#currentQuestionContainer .b_cards[iscorrectoption=True]:not(.btsel)');
-  // TODO: this doesn't work anymore for "this or that" because the window variable doesn't have the same value as the data-option
-  clickOption(`#currentQuestionContainer .btOptionCard[data-option="${correctAnswer}"]`);
   clickOption(`#currentQuestionContainer .rqOption:not(.optionDisable)[data-option="${correctAnswer}"]`);
   clickOption('.bt_poll .btOption');
   click('#OptionBackground00.b_hide');
+
+  // TODO: this doesn't work anymore for "this or that" because the window variable doesn't have the same value as the data-option
+  // so we are just going to arbitrarily guess the first one we see if the random guess preference is selected
+  clickOption(`#currentQuestionContainer .btOptionCard[data-option="${correctAnswer}"]`);
+  if (randomGuesses) clickOption('#currentQuestionContainer .btOptionCard');
 
   // for some reason, testYourSmartsOption.onmouseup returns null
   // as a workaround, parse the search URL from the attribute and manually go to it
@@ -80,23 +84,26 @@ function clickLoop() {
   click('#ListOfQuestionAndAnswerPanes div[id^=AnswerPane]:not(.b_hide) input[type=submit]');
 }
 
-const CLICK_DELAY = 500;
 let clickInterval;
 
-chrome.storage.local.get(['autoClick'], results => {
+chrome.storage.local.get(['autoClick', 'randomGuesses'], results => {
   // value could be false, in which case the shortcut || operator would evaluate to the default (not intended)
+  randomGuesses = results.randomGuesses === undefined ? constants.DEFAULTS.RANDOM_GUESSES : results.randomGuesses;
   const autoClick = results.autoClick === undefined ? constants.DEFAULTS.AUTO_CLICK : results.autoClick;
   if (autoClick) {
-    clickInterval = setInterval(clickLoop, CLICK_DELAY);
+    clickInterval = setInterval(clickLoop, constants.CLICK_DELAY);
   }
 });
 
 chrome.storage.onChanged.addListener(changes => {
   if (changes.autoClick) {
     if (changes.autoClick.newValue) {
-      clickInterval = setInterval(clickLoop, CLICK_DELAY);
+      clickInterval = setInterval(clickLoop, constants.CLICK_DELAY);
     } else {
       clearInterval(clickInterval);
     }
+  }
+  if (changes.randomGuesses) {
+    randomGuesses = changes.randomGuesses.newValue;
   }
 });
