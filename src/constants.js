@@ -5,5 +5,6 @@ const constants = Object.freeze({
     DELAY: 600,
     AUTO_CLICK: false,
     RANDOM_GUESSES: false,
+    RANDOM_LETTERS: false,
   }),
 });
