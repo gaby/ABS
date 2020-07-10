@@ -11,18 +11,14 @@ function saveChanges() {
   });
 }
 
-function getRandomIndex(arr) {
-  return Math.floor(Math.random() * arr.length)
-}
-
 function getSearchQuery(randomLetters = false) {
   if (randomLetters) return Math.random().toString(36).substr(2);
 
-  const queryTemplate = queryTemplates[getRandomIndex(queryTemplates)];
+  const queryTemplate = getRandomElement(queryTemplates);
   const variables = queryTemplate.template.match(/(\$\d+)/g); // variables are $1, $2, ... where the digit is the ID of the variable
   const query = variables.reduce((acc, variable, i) => {
     const type = queryTemplate.types[i];
-    const value = types[type][getRandomIndex(types[type])];
+    const value = getRandomElement(types[type]);
     return acc.replace(variable, value);
   }, queryTemplate.template);
 
