@@ -2,6 +2,9 @@
 const mobileUserAgent = getRandomElement(constants.MOBILE_USER_AGENTS);
 const edgeUserAgent = constants.EDGE_USER_AGENT;
 
+// listen for messages on a port connection from the popup
+// these messages will let us know if we should spoof
+// the User-Agent headers to appear on another platform
 let spoofUserAgent = false;
 let doMobileSearches = false;
 chrome.runtime.onConnect.addListener(port => {
@@ -39,5 +42,5 @@ chrome.webRequest.onBeforeSendHeaders.addListener(details => {
   }
   return { requestHeaders: details.requestHeaders };
 }, {
-  urls: ['https://www.bing.com/*'],
+  urls: ['https://*.bing.com/*'],
 }, ['blocking', 'requestHeaders']);
