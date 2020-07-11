@@ -17,6 +17,14 @@ label {
   cursor: pointer;
 }
 
+.row {
+  display: flex;
+}
+
+.row > * {
+  margin-right: 5px;
+}
+
 input[type="checkbox"] {
   cursor: pointer;
 }

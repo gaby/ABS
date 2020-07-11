@@ -6,7 +6,7 @@ const constants = Object.freeze({
     AUTO_CLICK: false,
     RANDOM_GUESSES: false,
     RANDOM_LETTERS: false,
-    MOBILE_SEARCHES: true,
+    PLATFORM_SPOOFING: 'desktop-and-mobile',
   }),
   MESSAGE_TYPES: Object.freeze({
     SPOOF_USER_AGENT: 0,

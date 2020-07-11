@@ -16,17 +16,24 @@
         Delay (milliseconds):
         <input type="number" min="200" max="5000" step="200" id="delay">
 
-        <div class="option-wrapper">
-          <label><input id="mobile-searches" type="checkbox" /> Also do mobile searches (doubles searches)</label>
-        </div>
+        Platform spoofing (Edge)
+        <select id="platform-spoofing">
+          <option value="desktop-and-mobile">Desktop and mobile</option>
+          <option value="desktop-only">Desktop only</option>
+          <option value="mobile-only">Mobile only</option>
+          <option value="none">No spoofing</option>
+        </select>
     
-        <input type="button" value="Start searches!" id="search">
+        <div class="row">
+          <input type="button" value="Start searches!" id="search">
+          <input type="button" value="Stop" id="stop">
+        </div>
       </div>
       <div id="iteration-count-wrapper">
         <div>
           Searches left...
-          <div id="iteration-desktop-count"></div>
-          <div id="iteration-mobile-count"></div>
+          <div id="iteration-count-1"></div>
+          <div id="iteration-count-2"></div>
         </div>
       </div>
     </div>

@@ -1,7 +1,15 @@
 const port = chrome.runtime.connect();
 
-const iterationDesktopCount = document.getElementById('iteration-desktop-count');
-const iterationMobileCount = document.getElementById('iteration-mobile-count');
+function spoof(value) {
+  port.postMessage({ type: constants.MESSAGE_TYPES.SPOOF_USER_AGENT, value });
+}
+
+function mobileSpoof(value) {
+  port.postMessage({ type: constants.MESSAGE_TYPES.ACTIVELY_SEARCHING_MOBILE, value });
+}
+
+const iterationCount1 = document.getElementById('iteration-count-1');
+const iterationCount2 = document.getElementById('iteration-count-2');
 const iterationCountWrapper = document.getElementById('iteration-count-wrapper');
 
 function saveChanges() {
@@ -11,7 +19,7 @@ function saveChanges() {
     autoClick: document.getElementById('auto-click').checked,
     randomGuesses: document.getElementById('random-guesses').checked,
     randomLetters: document.getElementById('random-letters-search').checked,
-    mobileSearches: document.getElementById('mobile-searches').checked,
+    platformSpoofing: document.getElementById('platform-spoofing').value,
   });
 }
 
@@ -30,54 +38,86 @@ function getSearchQuery(randomLetters = false) {
 }
 
 let searchInterval;
-function startSearches(numIterations, delay) {
+
+function stopSearches() {
+  clearInterval(searchInterval);
+  iterationCount1.innerText = '';
+  iterationCount2.innerText = '';
+  iterationCountWrapper.style = 'visibility: hidden;';
+  spoof(false);
+  mobileSpoof(false);
+}
+
+function startSearches(numIterations, delay, platformSpoofing) {
   clearInterval(searchInterval);
 
+  // send messages over the port to initiate spoofing based on the preference
+  if (platformSpoofing === 'none' || !platformSpoofing) {
+    spoof(false);
+    mobileSpoof(false);
+  } else if (platformSpoofing === 'desktop-and-mobile') {
+    numIterations *= 2;
+    spoof(true);
+    mobileSpoof(false);
+  } else if (platformSpoofing === 'desktop-only') {
+    spoof(true);
+    mobileSpoof(false);
+  } else if (platformSpoofing === 'mobile-only') {
+    spoof(true);
+    mobileSpoof(true);
+  }
+
+  // - redirects to Bing search with a query
+  // - sends message over the port to switch to mobile spoofing once required
+  // - returns an array of overall search counts, desktop counts and mobile counts 
   const search = (() => {
-    let count = 0;
-    return () => {
+    let overallCount = 0;
+    let desktopCount = 0;
+    let mobileCount = 0;
+    return isMobile => {
+      if (isMobile && mobileCount === 0) mobileSpoof(true);
       const query = getSearchQuery(document.getElementById('random-letters-search').checked);
       chrome.tabs.update({
         url: `https://bing.com/search?q=${query}`,
       });
-      return ++count;
+      if (isMobile) mobileCount++;
+      else desktopCount++;
+      return [++overallCount, desktopCount, mobileCount];
     };
   })();
 
-  let count = search();
+  // if we are spoofing desktop searches, show a count labelled 'desktop'. same for mobile.
+  // if we are doing mobile and desktop searches, get the remaining count from half of the numIterations, since the numIterations includes both
+  // if we are not spoofing anything, then just display an unlabelled count.
+  function setCountDisplayText(overallCount, desktopCount, mobileCount) {
+    const containsDesktop = platformSpoofing.includes('desktop');
+    const containsMobile = platformSpoofing.includes('mobile');
+    const desktopRemaining = (platformSpoofing === 'desktop-and-mobile' ? numIterations / 2 : numIterations) - desktopCount;
+    const mobileRemaining = (platformSpoofing === 'desktop-and-mobile' ? numIterations / 2 : numIterations) - mobileCount;
 
-  function setCountDisplayText() {
-    const desktopCount = Math.max(0, numIterations - count);
-    const mobileCount = Math.min(numIterations, 2 * numIterations - count);
-    const mobileSearches = document.getElementById('mobile-searches').checked;
-    iterationDesktopCount.innerText = mobileSearches ? `${desktopCount} (desktop)` : desktopCount;
-    iterationMobileCount.innerText = mobileSearches ? `${mobileCount} (mobile)` : '';
+    if (containsDesktop) {
+      iterationCount1.innerText = `${desktopRemaining} (desktop)`;
+    }
+    if (containsMobile) {
+      const el = containsDesktop ? iterationCount2 : iterationCount1;
+      el.innerText = `${mobileRemaining} (mobile)`;
+    }
+    if (!containsDesktop && !containsMobile) {
+      iterationCount1.innerText = numIterations - overallCount;
+    }
   }
 
-  setCountDisplayText();
+  let counts = search();
+  setCountDisplayText(...counts);
   iterationCountWrapper.style = 'visibility: visible;';
 
-  searchInterval = setInterval(async () => {
-    const mobileSearches = document.getElementById('mobile-searches').checked;
-  
-    // if the preference to do mobile searches is selected, then double the searches,
-    // but first flag to the background script that we are supposed to spoof the User-Agent header on requests
-    if (mobileSearches && count === numIterations) {
-      port.postMessage({ type: constants.MESSAGE_TYPES.ACTIVELY_SEARCHING_MOBILE, value: true });
-    }
-
-    // either we exceeded the number of iterations for desktop and there are no mobile searches to be done,
-    // or we are doing mobile searches and exceeded both desktop and mobile searches
-    if (count >= numIterations && !(mobileSearches && count < 2 * numIterations)) {
-      clearInterval(searchInterval);
-      iterationDesktopCount.innerText = '';
-      iterationMobileCount.innerText = '';
-      iterationCountWrapper.style = 'visibility: hidden;';
-      port.postMessage({ type: constants.MESSAGE_TYPES.SPOOF_USER_AGENT, value: false });
-      port.postMessage({ type: constants.MESSAGE_TYPES.ACTIVELY_SEARCHING_MOBILE, value: false });
+  searchInterval = setInterval(async () => {  
+    if (counts[0] >= numIterations) {
+      stopSearches();
     } else {
-      count = search();
-      setCountDisplayText();
+      const isMobile = platformSpoofing === 'mobile-only' || (platformSpoofing === 'desktop-and-mobile' && counts[0] >= numIterations / 2);
+      counts = search(isMobile);
+      setCountDisplayText(...counts);
     }
   }, delay);
 }
@@ -89,14 +129,14 @@ function reset() {
 }
 
 // load the saved values from the Chrome storage API
-chrome.storage.local.get(['numIterations', 'delay', 'autoClick', 'randomGuesses', 'randomLetters', 'mobileSearches'], result => {
+chrome.storage.local.get(['numIterations', 'delay', 'autoClick', 'randomGuesses', 'randomLetters', 'platformSpoofing'], result => {
   document.getElementById('num-iterations').value = result.numIterations || constants.DEFAULT_PREFERENCES.NUM_ITERATIONS;
   document.getElementById('delay').value = result.delay || constants.DEFAULT_PREFERENCES.DELAY;
   // value could be false, in which case the shortcut || operator would evaluate to the default (not intended)
   document.getElementById('auto-click').checked = result.autoClick === undefined ? constants.DEFAULT_PREFERENCES.AUTO_CLICK : result.autoClick;
   document.getElementById('random-guesses').checked = result.randomGuesses === undefined ? constants.DEFAULT_PREFERENCES.RANDOM_GUESSES : result.randomGuesses;
   document.getElementById('random-letters-search').checked = result.randomLetters === undefined ? constants.DEFAULT_PREFERENCES.RANDOM_LETTERS : result.randomLetters;
-  document.getElementById('mobile-searches').checked = result.mobileSearches === undefined ? constants.DEFAULT_PREFERENCES.MOBILE_SEARCHES : result.mobileSearches;
+  document.getElementById('platform-spoofing').value = result.platformSpoofing === undefined ? constants.DEFAULT_PREFERENCES.PLATFORM_SPOOFING : result.platformSpoofing;
 });
 
 document.getElementById('num-iterations').addEventListener('input', saveChanges);
@@ -104,17 +144,16 @@ document.getElementById('delay').addEventListener('input', saveChanges);
 document.getElementById('auto-click').addEventListener('change', saveChanges);
 document.getElementById('random-guesses').addEventListener('change', saveChanges);
 document.getElementById('random-letters-search').addEventListener('change', saveChanges);
-document.getElementById('mobile-searches').addEventListener('change', saveChanges);
+document.getElementById('platform-spoofing').addEventListener('change', saveChanges);
 
 document.getElementById('search').addEventListener('click', async () => {
   const numIterations = parseInt(document.getElementById('num-iterations').value, 10);
   const delay = parseInt(document.getElementById('delay').value, 10);
-  // always start with the desktop searches
-  port.postMessage({ type: constants.MESSAGE_TYPES.SPOOF_USER_AGENT, value: true });
-  port.postMessage({ type: constants.MESSAGE_TYPES.ACTIVELY_SEARCHING_MOBILE, value: false });
-  startSearches(numIterations, delay);
+  const platformSpoofing = document.getElementById('platform-spoofing').value;
+  startSearches(numIterations, delay, platformSpoofing);
 });
 document.getElementById('reset').addEventListener('click', reset);
+document.getElementById('stop').addEventListener('click', stopSearches);
 
 function openRewardTasks() {
   chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
