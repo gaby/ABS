@@ -71,6 +71,7 @@ function startSearches(numIterations, delay) {
       iterationDesktopCount.innerText = '';
       iterationMobileCount.innerText = '';
       iterationCountWrapper.style = 'visibility: hidden;';
+      setPreference('activelySearchingMobile', false);
     } else {
       count = search();
       setCountDisplayText();
@@ -102,6 +103,8 @@ document.getElementById('random-guesses').addEventListener('change', saveChanges
 document.getElementById('random-letters-search').addEventListener('change', saveChanges);
 document.getElementById('mobile-searches').addEventListener('change', saveChanges);
 
+// always reset this flag when loading the popup so it doesn't mess with all of Bing.com
+setPreference('activelySearchingMobile', false);
 document.getElementById('search').addEventListener('click', async () => {
   const numIterations = parseInt(document.getElementById('num-iterations').value, 10);
   const delay = parseInt(document.getElementById('delay').value, 10);

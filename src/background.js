@@ -10,7 +10,7 @@ hookPreferences(['activelySearchingMobile'], prefs);
 
 chrome.webRequest.onBeforeSendHeaders.addListener(details => {
   for (let i = 0; i < details.requestHeaders.length; i++) {
-    if (details.requestHeaders[i].name === 'User-Agent') {
+    if (details.requestHeaders[i].name === 'User-Agent' && chrome.extension.getViews({ type: "popup" }).length > 0) {
       if (prefs.activelySearchingMobile) {
         details.requestHeaders[i].value = mobileUserAgent;
       } else {
