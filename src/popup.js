@@ -1,4 +1,5 @@
-const iterationCount = document.getElementById('iteration-count');
+const iterationDesktopCount = document.getElementById('iteration-desktop-count');
+const iterationMobileCount = document.getElementById('iteration-mobile-count');
 const iterationCountWrapper = document.getElementById('iteration-count-wrapper');
 
 function saveChanges() {
@@ -8,6 +9,7 @@ function saveChanges() {
     autoClick: document.getElementById('auto-click').checked,
     randomGuesses: document.getElementById('random-guesses').checked,
     randomLetters: document.getElementById('random-letters-search').checked,
+    mobileSearches: document.getElementById('mobile-searches').checked,
   });
 }
 
@@ -28,6 +30,7 @@ function getSearchQuery(randomLetters = false) {
 let searchInterval;
 function startSearches(numIterations, delay) {
   clearInterval(searchInterval);
+
   const search = (() => {
     let count = 0;
     return () => {
@@ -39,36 +42,57 @@ function startSearches(numIterations, delay) {
     };
   })();
 
-  search();
-  iterationCount.innerText = numIterations - 1;
-  iterationCountWrapper.style = 'display: flex;';
+  let count = search();
 
-  searchInterval = setInterval(() => {
-    const count = search();
-    if (count >= numIterations) {
+  function setCountDisplayText() {
+    const desktopCount = Math.max(0, numIterations - count);
+    const mobileCount = Math.min(numIterations, 2 * numIterations - count);
+    const mobileSearches = document.getElementById('mobile-searches').checked;
+    iterationDesktopCount.innerText = mobileSearches ? `${desktopCount} (desktop)` : desktopCount;
+    iterationMobileCount.innerText = mobileSearches ? `${mobileCount} (mobile)` : '';
+  }
+
+  setCountDisplayText();
+  iterationCountWrapper.style = 'visibility: visible;';
+
+  searchInterval = setInterval(async () => {
+    const mobileSearches = document.getElementById('mobile-searches').checked;
+  
+    // if the preference to do mobile searches is selected, then double the searches,
+    // but first flag to the background script that we are supposed to spoof the User-Agent header on requests
+    if (mobileSearches && count === numIterations) {
+      await setPreference('activelySearchingMobile', true);
+    }
+
+    // either we exceeded the number of iterations for desktop and there are no mobile searches to be done,
+    // or we are doing mobile searches and exceeded both desktop and mobile searches
+    if (count >= numIterations && !(mobileSearches && count < 2 * numIterations)) {
       clearInterval(searchInterval);
-      iterationCount.innerText = '';
-      iterationCountWrapper.style = 'display: none;';
+      iterationDesktopCount.innerText = '';
+      iterationMobileCount.innerText = '';
+      iterationCountWrapper.style = 'visibility: hidden;';
     } else {
-      iterationCount.innerText = numIterations - count;
+      count = search();
+      setCountDisplayText();
     }
   }, delay);
 }
 
 function reset() {
-  document.getElementById('num-iterations').value = constants.DEFAULTS.NUM_ITERATIONS;
-  document.getElementById('delay').value = constants.DEFAULTS.DELAY;
+  document.getElementById('num-iterations').value = constants.DEFAULT_PREFERENCES.NUM_ITERATIONS;
+  document.getElementById('delay').value = constants.DEFAULT_PREFERENCES.DELAY;
   saveChanges();
 }
 
 // load the saved values from the Chrome storage API
-chrome.storage.local.get(['numIterations', 'delay', 'autoClick', 'randomGuesses', 'randomLetters'], result => {
-  document.getElementById('num-iterations').value = result.numIterations || constants.DEFAULTS.NUM_ITERATIONS;
-  document.getElementById('delay').value = result.delay || constants.DEFAULTS.DELAY;
+chrome.storage.local.get(['numIterations', 'delay', 'autoClick', 'randomGuesses', 'randomLetters', 'mobileSearches'], result => {
+  document.getElementById('num-iterations').value = result.numIterations || constants.DEFAULT_PREFERENCES.NUM_ITERATIONS;
+  document.getElementById('delay').value = result.delay || constants.DEFAULT_PREFERENCES.DELAY;
   // value could be false, in which case the shortcut || operator would evaluate to the default (not intended)
-  document.getElementById('auto-click').checked = result.autoClick === undefined ? constants.DEFAULTS.AUTO_CLICK : result.autoClick;
-  document.getElementById('random-guesses').checked = result.randomGuesses === undefined ? constants.DEFAULTS.RANDOM_GUESSES : result.randomGuesses;
-  document.getElementById('random-letters-search').checked = result.randomLetters === undefined ? constants.DEFAULTS.RANDOM_LETTERS : result.randomLetters;
+  document.getElementById('auto-click').checked = result.autoClick === undefined ? constants.DEFAULT_PREFERENCES.AUTO_CLICK : result.autoClick;
+  document.getElementById('random-guesses').checked = result.randomGuesses === undefined ? constants.DEFAULT_PREFERENCES.RANDOM_GUESSES : result.randomGuesses;
+  document.getElementById('random-letters-search').checked = result.randomLetters === undefined ? constants.DEFAULT_PREFERENCES.RANDOM_LETTERS : result.randomLetters;
+  document.getElementById('mobile-searches').checked = result.mobileSearches === undefined ? constants.DEFAULT_PREFERENCES.MOBILE_SEARCHES : result.mobileSearches;
 });
 
 document.getElementById('num-iterations').addEventListener('input', saveChanges);
@@ -76,12 +100,14 @@ document.getElementById('delay').addEventListener('input', saveChanges);
 document.getElementById('auto-click').addEventListener('change', saveChanges);
 document.getElementById('random-guesses').addEventListener('change', saveChanges);
 document.getElementById('random-letters-search').addEventListener('change', saveChanges);
+document.getElementById('mobile-searches').addEventListener('change', saveChanges);
 
-document.getElementById('search').addEventListener('click', () => {
-  startSearches(
-    document.getElementById('num-iterations').value,
-    document.getElementById('delay').value,
-  );
+document.getElementById('search').addEventListener('click', async () => {
+  const numIterations = parseInt(document.getElementById('num-iterations').value, 10);
+  const delay = parseInt(document.getElementById('delay').value, 10);
+  // always start with the desktop searches
+  await setPreference('activelySearchingMobile', false);
+  startSearches(numIterations, delay);
 });
 document.getElementById('reset').addEventListener('click', reset);
 

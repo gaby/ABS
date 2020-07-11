@@ -5,14 +5,21 @@
   "manifest_version": 2,
   "icons": { "16": "icons/icon16.png", "48": "icons/icon48.png", "128": "icons/icon128.png" },
   "content_scripts": [{
-    "matches": ["https://bing.com/*", "https://www.bing.com/*", "https://account.microsoft.com/rewards/*"],
-    "js": ["script-injector.js", "constants.js", "content-script.js"]
+    "matches": ["https://*.bing.com/*", "https://account.microsoft.com/rewards/*"],
+    "js": ["script-injector.js", "constants.js", "utils.js", "chrome-utils.js", "content-script.js"]
   }],
+  "background": {
+    "scripts": ["constants.js", "utils.js", "chrome-utils.js", "background.js"],
+    "persistent": true
+  },
   "browser_action": {
     "default_popup": "popup.html"
   },
   "web_accessible_resources": ["window-variable-grabber.js"],
   "permissions": [
+    "https://*.bing.com/*",
+    "webRequest",
+    "webRequestBlocking",
     "tabs",
     "storage"
   ]

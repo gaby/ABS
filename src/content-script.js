@@ -17,7 +17,7 @@ chrome.runtime.onMessage.addListener((request, sender, cb) => {
   cb(null);
 });
 
-let randomGuesses;
+const prefs = { ...constants.DEFAULT_PREFERENCES };
 
 function clickOption(selector, parent = document) {
   const e = parent.querySelector(selector);
@@ -64,7 +64,7 @@ function clickLoop() {
   // TODO: this doesn't work anymore for "this or that" because the window variable doesn't have the same value as the data-option
   // so we are just going to arbitrarily guess the first one we see if the random guess preference is selected
   clickOption(`#currentQuestionContainer .btOptionCard[data-option="${correctAnswer}"]`);
-  if (randomGuesses) clickOption('#currentQuestionContainer .btOptionCard');
+  if (prefs.randomGuesses) clickOption('#currentQuestionContainer .btOptionCard');
 
   // for some reason, testYourSmartsOption.onmouseup returns null
   // as a workaround, parse the search URL from the attribute and manually go to it
@@ -86,24 +86,28 @@ function clickLoop() {
 
 let clickInterval;
 
-chrome.storage.local.get(['autoClick', 'randomGuesses'], results => {
-  // value could be false, in which case the shortcut || operator would evaluate to the default (not intended)
-  randomGuesses = results.randomGuesses === undefined ? constants.DEFAULTS.RANDOM_GUESSES : results.randomGuesses;
-  const autoClick = results.autoClick === undefined ? constants.DEFAULTS.AUTO_CLICK : results.autoClick;
-  if (autoClick) {
-    clickInterval = setInterval(clickLoop, constants.CLICK_DELAY);
-  }
-});
+getPreferences([
+  {
+    key: 'autoClick',
+    cb: autoClick => {
+      if (autoClick) {
+        clickInterval = setInterval(clickLoop, constants.CLICK_DELAY);
+      }
+    },
+  },
+  'randomGuesses',
+], prefs);
 
-chrome.storage.onChanged.addListener(changes => {
-  if (changes.autoClick) {
-    if (changes.autoClick.newValue) {
-      clickInterval = setInterval(clickLoop, constants.CLICK_DELAY);
-    } else {
-      clearInterval(clickInterval);
-    }
-  }
-  if (changes.randomGuesses) {
-    randomGuesses = changes.randomGuesses.newValue;
-  }
-});
+hookPreferences([
+  {
+    key: 'autoClick',
+    cb: autoClick => {
+      if (autoClick) {
+        clickInterval = setInterval(clickLoop, constants.CLICK_DELAY);
+      } else {
+        clearInterval(clickInterval);
+      }
+    },
+  },
+  'randomGuesses',
+], prefs);

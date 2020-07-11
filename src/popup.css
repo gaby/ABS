@@ -97,14 +97,15 @@ a:hover {
 }
 
 #iteration-count-wrapper {
-  display: none; /* display will be flex when displayed (during iterations) */
-  align-items: center;
+  visibility: hidden; /* visibility will be changed during iterations */
+  display: flex;
+  align-items: flex-start;
   justify-content: center;
-  width: 140px;
+  width: 180px;
 }
 
 #iteration-count-wrapper > div {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
 }
