@@ -1,3 +1,5 @@
+const port = chrome.runtime.connect();
+
 const iterationDesktopCount = document.getElementById('iteration-desktop-count');
 const iterationMobileCount = document.getElementById('iteration-mobile-count');
 const iterationCountWrapper = document.getElementById('iteration-count-wrapper');
@@ -61,7 +63,7 @@ function startSearches(numIterations, delay) {
     // if the preference to do mobile searches is selected, then double the searches,
     // but first flag to the background script that we are supposed to spoof the User-Agent header on requests
     if (mobileSearches && count === numIterations) {
-      await setPreference('activelySearchingMobile', true);
+      port.postMessage({ type: constants.MESSAGE_TYPES.ACTIVELY_SEARCHING_MOBILE, value: true });
     }
 
     // either we exceeded the number of iterations for desktop and there are no mobile searches to be done,
@@ -71,7 +73,8 @@ function startSearches(numIterations, delay) {
       iterationDesktopCount.innerText = '';
       iterationMobileCount.innerText = '';
       iterationCountWrapper.style = 'visibility: hidden;';
-      setPreference('activelySearchingMobile', false);
+      port.postMessage({ type: constants.MESSAGE_TYPES.SPOOF_USER_AGENT, value: false });
+      port.postMessage({ type: constants.MESSAGE_TYPES.ACTIVELY_SEARCHING_MOBILE, value: false });
     } else {
       count = search();
       setCountDisplayText();
@@ -103,13 +106,12 @@ document.getElementById('random-guesses').addEventListener('change', saveChanges
 document.getElementById('random-letters-search').addEventListener('change', saveChanges);
 document.getElementById('mobile-searches').addEventListener('change', saveChanges);
 
-// always reset this flag when loading the popup so it doesn't mess with all of Bing.com
-setPreference('activelySearchingMobile', false);
 document.getElementById('search').addEventListener('click', async () => {
   const numIterations = parseInt(document.getElementById('num-iterations').value, 10);
   const delay = parseInt(document.getElementById('delay').value, 10);
   // always start with the desktop searches
-  await setPreference('activelySearchingMobile', false);
+  port.postMessage({ type: constants.MESSAGE_TYPES.SPOOF_USER_AGENT, value: true });
+  port.postMessage({ type: constants.MESSAGE_TYPES.ACTIVELY_SEARCHING_MOBILE, value: false });
   startSearches(numIterations, delay);
 });
 document.getElementById('reset').addEventListener('click', reset);
