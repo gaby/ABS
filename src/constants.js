@@ -1,8 +1,8 @@
 const constants = Object.freeze({
   CLICK_DELAY: 500,
   DEFAULT_PREFERENCES: Object.freeze({
-    NUM_ITERATIONS: 30,
-    DELAY: 600,
+    NUM_ITERATIONS: 35,
+    DELAY: 1000,
     AUTO_CLICK: false,
     RANDOM_GUESSES: false,
     RANDOM_LETTERS: false,
