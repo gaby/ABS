@@ -232,6 +232,7 @@ document.getElementById('open-reward-tasks').addEventListener('click', () => {
     });
   }
 
+  stopSearches();
   chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
     const tab = tabs[0];
     if (tab && tab.url.includes('https://account.microsoft.com/rewards')) {
