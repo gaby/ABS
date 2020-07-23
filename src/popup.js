@@ -50,7 +50,7 @@ function stopSearches() {
   mobileSpoof(false);
 }
 
-function startSearches(numIterations, delay, platformSpoofing) {
+function startSearches(numIterations, platformSpoofing) {
   clearTimeout(searchTimeout);
 
   // send messages over the port to initiate spoofing based on the preference
@@ -125,7 +125,7 @@ function startSearches(numIterations, delay, platformSpoofing) {
   setCountDisplayText(...counts);
 
   (async function searchLoop() {
-    let currentDelay = delay;
+    let currentDelay = Number(document.getElementById('delay').value);
     if (document.getElementById('random-search').checked) {
       const minDelay = Number(document.getElementById('random-search-delay-min').value);
       const maxDelay = Number(document.getElementById('random-search-delay-max').value);
@@ -215,19 +215,14 @@ changeBindings.forEach(({ id, eventType, fn = saveChanges }) => {
 });
 
 document.getElementById('search').addEventListener('click', async () => {
-  const delay = Number(document.getElementById('delay').value);
-  const platformSpoofing = document.getElementById('platform-spoofing').value;
-
   let numIterations = Number(document.getElementById('num-iterations').value);
-
-  const isRandomSearch = document.getElementById('random-search').checked;
-  if (isRandomSearch) {
+  if (document.getElementById('random-search').checked) {
     const minInterations = Number(document.getElementById('random-search-iterations-min').value);
     const maxIterations = Number(document.getElementById('random-search-iterations-max').value);
     numIterations = random(minInterations, maxIterations);
   }
-
-  startSearches(numIterations, delay, platformSpoofing);
+  const platformSpoofing = document.getElementById('platform-spoofing').value;
+  startSearches(numIterations, platformSpoofing);
 });
 
 document.getElementById('open-reward-tasks').addEventListener('click', () => {
