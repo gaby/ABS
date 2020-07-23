@@ -25,6 +25,10 @@ label {
   margin-right: 5px;
 }
 
+.fifty {
+  width: 50%;
+}
+
 input[type="checkbox"] {
   cursor: pointer;
 }
@@ -104,12 +108,14 @@ a:hover {
   display: flex;
 }
 
+#static-search-input-wrapper, #random-search-input-wrapper {
+  /* visibility will be changed based off random search preference */
+  display: none;
+}
+
 #iteration-count-wrapper {
-  visibility: hidden; /* visibility will be changed during iterations */
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  width: 180px;
+  /* visibility will be changed during iterations */
+  display: none;
 }
 
 #iteration-count-wrapper > div {

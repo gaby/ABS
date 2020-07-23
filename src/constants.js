@@ -5,7 +5,12 @@ const constants = Object.freeze({
     DELAY: 1000,
     AUTO_CLICK: false,
     RANDOM_GUESSES: false,
-    RANDOM_LETTERS: false,
+    RANDOM_SEARCH: false,
+    RANDOM_SEARCH_DELAY_MINIMUM: 3000,
+    RANDOM_SEARCH_DELAY_MAXIMUM: 17000,
+    RANDOM_SEARCH_ITERATIONS_MINIMUM: 30,
+    RANDOM_SEARCH_ITERATIONS_MAXIMUM: 42,
+    RANDOM_LETTERS_SEARCH: false,
     PLATFORM_SPOOFING: 'desktop-and-mobile',
   }),
   MESSAGE_TYPES: Object.freeze({
