@@ -104,10 +104,6 @@ a:hover {
   margin-right: 5px;
 }
 
-.input-wrapper {
-  display: flex;
-}
-
 #static-search-input-wrapper, #random-search-input-wrapper {
   /* visibility will be changed based off random search preference */
   display: none;

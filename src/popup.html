@@ -8,63 +8,58 @@
   <body>
     <h2>Automated Bing Searches</h2>
 
-    <div class="input-wrapper">
-      <div>
-        <div id="static-search-input-wrapper">
-          <div class="row">
-            <div class="fifty">
-              Num searches:
-              <input type="number" min="1" max="70" id="num-iterations">
-            </div>
-          </div>
-      
-          <div class="row">
-            <div class="fifty">
-              Delay (ms):
-              <input type="number" min="200" max="5000" step="200" id="delay">
-            </div>
-          </div>
-        </div>
-        <div id="random-search-input-wrapper">
-          <div class="row">
-            <div class="fifty">
-              Min num searches:
-              <input type="number" min="1" max="70" id="random-search-iterations-min">
-            </div>
-            <div class="fifty">
-              Max num searches:
-              <input type="number" min="1" max="70" id="random-search-iterations-max">
-            </div>
-          </div>
-          <div class="row">
-            <div class="fifty">
-              Min delay (ms):
-              <input type="number" min="200" max="40000" step="200" id="random-search-delay-min">
-            </div>
-            <div class="fifty">
-              Max delay (ms):
-              <input type="number" min="200" max="40000" step="200" id="random-search-delay-max">
-            </div>
-          </div>
-        </div>
-
-        <div class="option-wrapper">
-          <label><input id="random-search" type="checkbox" /> Random search times</label>
-        </div>
-
-        Platform spoofing (Edge)
-        <select id="platform-spoofing">
-          <option value="desktop-and-mobile">Desktop and mobile</option>
-          <option value="desktop-only">Desktop only</option>
-          <option value="mobile-only">Mobile only</option>
-          <option value="none">No spoofing</option>
-        </select>
-    
-        <div class="row">
-          <input type="button" value="Start searches!" id="search">
-          <input type="button" value="Stop" id="stop">
+    <div id="static-search-input-wrapper">
+      <div class="row">
+        <div class="fifty">
+          Num searches:
+          <input type="number" min="1" max="70" id="num-iterations">
         </div>
       </div>
+      <div class="row">
+        <div class="fifty">
+          Delay (ms):
+          <input type="number" min="200" max="5000" step="200" id="delay">
+        </div>
+      </div>
+    </div>
+    <div id="random-search-input-wrapper">
+      <div class="row">
+        <div class="fifty">
+          Min num searches:
+          <input type="number" min="1" max="70" id="random-search-iterations-min">
+        </div>
+        <div class="fifty">
+          Max num searches:
+          <input type="number" min="1" max="70" id="random-search-iterations-max">
+        </div>
+      </div>
+      <div class="row">
+        <div class="fifty">
+          Min delay (ms):
+          <input type="number" min="200" max="40000" step="200" id="random-search-delay-min">
+        </div>
+        <div class="fifty">
+          Max delay (ms):
+          <input type="number" min="200" max="40000" step="200" id="random-search-delay-max">
+        </div>
+      </div>
+    </div>
+
+    <div class="option-wrapper">
+      <label><input id="random-search" type="checkbox" /> Random search times</label>
+    </div>
+
+    Platform spoofing (Edge)
+    <select id="platform-spoofing">
+      <option value="desktop-and-mobile">Desktop and mobile</option>
+      <option value="desktop-only">Desktop only</option>
+      <option value="mobile-only">Mobile only</option>
+      <option value="none">No spoofing</option>
+    </select>
+
+    <div class="row">
+      <input type="button" value="Start searches!" id="search">
+      <input type="button" value="Stop" id="stop">
     </div>
 
     <a id="reset" href="">Reset to default values</a>
