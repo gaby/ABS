@@ -87,7 +87,7 @@ function startSearches(numIterations, delay, platformSpoofing) {
         // so that we don't kill the spoofing before the tab is loaded
         // and for some reason, this listener is triggered multiple times with the same 'completed' status, so we need a flag
         let resolved = false;
-        chrome.tabs.onUpdated.addListener((tabId , info) => {
+        chrome.tabs.onUpdated.addListener((tabId, info) => {
           if (info.status === 'complete' && !resolved) {
             resolved = true;
             if (isMobile) mobileCount++;
