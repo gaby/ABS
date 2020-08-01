@@ -31,16 +31,14 @@ chrome.runtime.onConnect.addListener(port => {
 });
 
 chrome.webRequest.onBeforeSendHeaders.addListener(details => {
-  for (let i = 0; i < details.requestHeaders.length; i++) {
-    if (details.requestHeaders[i].name === 'User-Agent' && spoofUserAgent) {
-      if (doMobileSearches) {
-        details.requestHeaders[i].value = mobileUserAgent;
-      } else {
-        details.requestHeaders[i].value = edgeUserAgent;
-      }
+  const { requestHeaders } = details;
+  requestHeaders.forEach(header => {
+    if (header.name === 'User-Agent' && spoofUserAgent) {
+      if (doMobileSearches) header.value = mobileUserAgent;
+      else header.value = edgeUserAgent;
     }
-  }
-  return { requestHeaders: details.requestHeaders };
+  });
+  return { requestHeaders };
 }, {
   urls: ['https://*.bing.com/*'],
 }, ['blocking', 'requestHeaders']);
