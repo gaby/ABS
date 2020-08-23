@@ -22,6 +22,9 @@ const constants = Object.freeze({
     ACTIVELY_SEARCHING_MOBILE: 1,
     SET_LAST_SEARCH: 2,
   }),
+  CORS_PROXY_URL: 'https://cors-anywhere.herokuapp.com/',
+  DAILY_TRENDS_API: 'https://trends.google.com/trends/api/dailytrends?geo=US',
+  NUM_DAILY_TREND_FETCHES: 4,
   // TODO: add more user agents
   MOBILE_USER_AGENTS: [
     'Mozilla/5.0 (Linux; Android 8.0; Pixel 2 Build/OPD3.170816.012) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.85 Mobile Safari/537.36 Edg/84.0.522.35',
