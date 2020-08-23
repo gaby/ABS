@@ -231,7 +231,7 @@ changeBindings.forEach(({ id, eventType, fn = saveChanges }) => {
   document.getElementById(id).addEventListener(eventType, fn);
 });
 
-document.getElementById('search').addEventListener('click', async () => {
+function handleSearchClicked() {
   let numIterations = Number(document.getElementById('num-iterations').value);
   if (document.getElementById('random-search').checked) {
     const minInterations = Number(document.getElementById('random-search-iterations-min').value);
@@ -240,7 +240,12 @@ document.getElementById('search').addEventListener('click', async () => {
   }
   const platformSpoofing = document.getElementById('platform-spoofing').value;
   startSearches(numIterations, platformSpoofing);
+}
+
+chrome.commands.onCommand.addListener(command => {
+  if (command === 'start-searches') handleSearchClicked();
 });
+document.getElementById('search').addEventListener('click', handleSearchClicked);
 
 document.getElementById('open-reward-tasks').addEventListener('click', () => {
   function openRewardTasks() {

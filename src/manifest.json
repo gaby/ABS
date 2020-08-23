@@ -15,6 +15,15 @@
   "browser_action": {
     "default_popup": "popup.html"
   },
+  "commands": {
+    "start-searches": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+S",
+        "mac": "Command+Shift+S"
+      },
+      "description": "Start searches"
+    }
+  },
   "web_accessible_resources": ["window-variable-grabber.js"],
   "permissions": [
     "https://*.bing.com/*",
