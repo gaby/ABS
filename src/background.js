@@ -15,7 +15,7 @@ chrome.runtime.onConnect.addListener(port => {
         doMobileSearches = msg.value;
         break;
       }
-      case msg.type === constants.MESSAGE_TYPES.SPOOF_USER_AGENT: {
+      case constants.MESSAGE_TYPES.SPOOF_USER_AGENT: {
         spoofUserAgent = msg.value;
         break;
       }
