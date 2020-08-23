@@ -9,7 +9,7 @@
     "js": ["script-injector.js", "constants.js", "utils.js", "chrome-utils.js", "content-script.js"]
   }],
   "background": {
-    "scripts": ["constants.js", "utils.js", "background.js"],
+    "scripts": ["constants.js", "utils.js", "chrome-utils.js", "background.js"],
     "persistent": true
   },
   "browser_action": {

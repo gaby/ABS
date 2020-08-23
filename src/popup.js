@@ -1,5 +1,9 @@
 const port = chrome.runtime.connect();
 
+function updateLastSearch() {
+  port.postMessage({ type: constants.MESSAGE_TYPES.SET_LAST_SEARCH, value: Date.now() });
+}
+
 function spoof(value) {
   port.postMessage({ type: constants.MESSAGE_TYPES.SPOOF_USER_AGENT, value });
 }
@@ -232,6 +236,8 @@ changeBindings.forEach(({ id, eventType, fn = saveChanges }) => {
 });
 
 function handleSearchClicked() {
+  updateLastSearch();
+
   let numIterations = Number(document.getElementById('num-iterations').value);
   if (document.getElementById('random-search').checked) {
     const minInterations = Number(document.getElementById('random-search-iterations-min').value);

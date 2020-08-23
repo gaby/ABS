@@ -1,4 +1,7 @@
 const constants = Object.freeze({
+  ONE_DAY_MILLIS: 24 * 60 * 60 * 1000,
+  BADGE_COLOR: '#F41A22',
+  BADGE_TEXT: '!',
   CLICK_DELAY: 500,
   DEFAULT_PREFERENCES: Object.freeze({
     NUM_ITERATIONS: 35,
@@ -17,6 +20,7 @@ const constants = Object.freeze({
   MESSAGE_TYPES: Object.freeze({
     SPOOF_USER_AGENT: 0,
     ACTIVELY_SEARCHING_MOBILE: 1,
+    SET_LAST_SEARCH: 2,
   }),
   // TODO: add more user agents
   MOBILE_USER_AGENTS: [
