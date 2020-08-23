@@ -86,7 +86,7 @@ function clickLoop() {
 
 let clickInterval;
 
-getPreferences([
+getStorage([
   {
     key: 'autoClick',
     cb: autoClick => {
@@ -98,7 +98,7 @@ getPreferences([
   'randomGuesses',
 ], prefs);
 
-hookPreferences([
+hookStorage([
   {
     key: 'autoClick',
     cb: autoClick => {

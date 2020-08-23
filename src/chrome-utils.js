@@ -1,25 +1,25 @@
 /**
- * Adds a listener to changed preferences. `prefs`
+ * Adds a listener to changed storage values. `storage`
  * will be updated or the associated callback function (`cb`)
- * will be called whenever a change occurs to preferences.
- * The preferences change when a user interacts with the extension's popup.
+ * will be called whenever a change occurs to the storage values.
+ * The storage values change when a user interacts with the extension's popup.
  *
- * @param {Array<string | Object>} prefKeys Array of preference "keys" which are hooked. If the element is a string, it is a preference key.
+ * @param {Array<string | Object>} storageKeys Array of storage "keys" which are hooked. If the element is a string, it is a storage key.
  *   If the element is an object, it has a `key` field (string) and a `cb` field (function).
- *   `cb` will be called with the new preference and `prefs` will not be set for this element (that is up to the caller).
- * @param {Object} prefs Object of preferences
+ *   `cb` will be called with the new value and `storage` will not be set for this element (that is up to the caller).
+ * @param {Object} storage Object of storage values
  */
-function hookPreferences(prefKeys, prefs) {
+function hookStorage(storageKeys, storage) {
   chrome.storage.onChanged.addListener(res => {
     if (chrome.runtime.lastError) {
       return;
     }
-    prefKeys.forEach(prefKey => {
+    storageKeys.forEach(storageKey => {
       // it's either a string or an object of the form { key, cb }
-      if (typeof prefKey === 'string') {
-        if (res[prefKey] !== undefined) prefs[prefKey] = res[prefKey].newValue;
+      if (typeof storageKey === 'string') {
+        if (res[storageKey] !== undefined) storage[storageKey] = res[storageKey].newValue;
       } else {
-        const { key, cb } = prefKey;
+        const { key, cb } = storageKey;
         if (res[key] !== undefined) cb(res[key].newValue);
       }
     });
@@ -27,30 +27,30 @@ function hookPreferences(prefKeys, prefs) {
 }
 
 /**
- * Similar to hookPreferences, except the preferences are retrieved immediately and only once.
+ * Similar to hookStorage, except the storage values are retrieved immediately and only once.
  * Also returns a Promise for convenience.
  *
- * @param {Array<string | Object>} prefKeys
- * @param {Object} prefs?
+ * @param {Array<string | Object>} storageKeys
+ * @param {Object} storage?
  *
- * @returns Promise<Array> - Promise which resolves to an array with the order corresponding to the prefKeys order.
+ * @returns Promise<Array> - Promise which resolves to an array with the order corresponding to the storageKeys order.
  */
-async function getPreferences(prefKeys, prefs) {
+async function getStorage(storageKeys, storage) {
   return new Promise((resolve, reject) => {
-    chrome.storage.local.get(prefKeys.map(key => (typeof key === 'string' ? key : key.key)), res => {
+    chrome.storage.local.get(storageKeys.map(key => (typeof key === 'string' ? key : key.key)), res => {
       if (chrome.runtime.lastError) {
         reject(chrome.runtime.lastError);
         return;
       }
-      resolve(prefKeys.map(prefKey => {
+      resolve(storageKeys.map(storageKey => {
         // it's either a string or an object of the form { key, cb }
-        if (typeof prefKey === 'string') {
-          if (!prefs) return res[prefKey];
-          if (res[prefKey] !== undefined) prefs[prefKey] = res[prefKey];
-          else prefs[prefKey] = constants.DEFAULT_PREFERENCES[prefKey];
-          return res[prefKey];
+        if (typeof storageKey === 'string') {
+          if (!storage) return res[storageKey];
+          if (res[storageKey] !== undefined) storage[storageKey] = res[storageKey];
+          else storage[storageKey] = constants.DEFAULT_PREFERENCES[storageKey];
+          return res[storageKey];
         }
-        const { key, cb } = prefKey;
+        const { key, cb } = storageKey;
         cb(res[key]);
         return res[key];
       }));
@@ -59,9 +59,9 @@ async function getPreferences(prefKeys, prefs) {
 }
 
 /**
- * Sets a local preference.
+ * Sets a local storage value.
  */
-async function setPreference(key, val) {
+async function setStorage(key, val) {
   return new Promise((resolve, reject) => {
     chrome.storage.local.set({ [key]: val }, () => {
       if (chrome.runtime.lastError) {
