@@ -11,6 +11,7 @@ const constants = Object.freeze({
     RANDOM_SEARCH_ITERATIONS_MINIMUM: 35,
     RANDOM_SEARCH_ITERATIONS_MAXIMUM: 42,
     RANDOM_LETTERS_SEARCH: false,
+    BLITZ_SEARCH: false,
     PLATFORM_SPOOFING: 'desktop-and-mobile',
   }),
   MESSAGE_TYPES: Object.freeze({

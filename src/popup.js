@@ -78,11 +78,28 @@ function startSearches(numIterations, platformSpoofing) {
     let mobileCount = 0;
     return isMobile => {
       if (isMobile && mobileCount === 0) mobileSpoof(true);
+
+      if (isMobile) mobileCount++;
+      else desktopCount++;
+      overallCount++;
+
       return new Promise(resolve => {
         const query = getSearchQuery(document.getElementById('random-letters-search').checked);
         chrome.tabs.update({
           url: `https://bing.com/search?q=${query}`,
         });
+
+        if (document.getElementById('blitz-search').checked) {
+          // arbitrarily wait 500ms on the last mobile search before resolving
+          // so that there is a delay before disabling the mobile spoofing
+          // (otherwise the last search will occur after the spoofing is disabled)
+          const delay = mobileCount === desktopCount ? 500 : 0;
+          setTimeout(() => {
+            resolve([overallCount, desktopCount, mobileCount]);
+          }, delay)
+          return;
+        }
+
         // an unfortunate solution, but we need to wait until the tab is loaded before resolving
         // so that we don't kill the spoofing before the tab is loaded
         // and for some reason, this listener is triggered multiple times with the same 'completed' status, so we need a flag
@@ -90,9 +107,7 @@ function startSearches(numIterations, platformSpoofing) {
         chrome.tabs.onUpdated.addListener((tabId, info) => {
           if (info.status === 'complete' && !resolved) {
             resolved = true;
-            if (isMobile) mobileCount++;
-            else desktopCount++;
-            resolve([++overallCount, desktopCount, mobileCount]);
+            resolve([overallCount, desktopCount, mobileCount]);
           }
         });
       });
@@ -157,6 +172,7 @@ const preferenceBindings = [
   { id: 'random-letters-search', elementKey: 'checked', preferenceKey: 'randomLettersSearch', defaultKey: 'RANDOM_LETTERS_SEARCH' },
   { id: 'platform-spoofing', elementKey: 'value', preferenceKey: 'platformSpoofing', defaultKey: 'PLATFORM_SPOOFING' },
   { id: 'random-search', elementKey: 'checked', preferenceKey: 'randomSearch', defaultKey: 'RANDOM_SEARCH' },
+  { id: 'blitz-search', elementKey: 'checked', preferenceKey: 'blitzSearch', defaultKey: 'BLITZ_SEARCH' },
 ];
 
 // load the saved values from the Chrome storage API
@@ -205,6 +221,7 @@ const changeBindings = [
   { id: 'auto-click', eventType: 'change' },
   { id: 'random-guesses', eventType: 'change' },
   { id: 'random-letters-search', eventType: 'change' },
+  { id: 'blitz-search', eventType: 'change' },
   { id: 'platform-spoofing', eventType: 'change' },
   { id: 'reset', eventType: 'click', fn: reset },
   { id: 'stop', eventType: 'click', fn: stopSearches },
