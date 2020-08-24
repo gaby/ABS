@@ -14,7 +14,6 @@ chrome.runtime.onMessage.addListener((request, sender, cb) => {
       break;
     }
   }
-  cb(null);
 });
 
 const prefs = { ...constants.DEFAULT_PREFERENCES };
@@ -55,59 +54,45 @@ function clickLoop() {
     }
   }
 
-  click('#rqStartQuiz');
-  clickOption('#currentQuestionContainer .b_cards[iscorrectoption=True]:not(.btsel)');
-  clickOption(`#currentQuestionContainer .rqOption:not(.optionDisable)[data-option="${correctAnswer}"]`);
-  clickOption('.bt_poll .btOption');
-  click('#OptionBackground00.b_hide');
-
-  // TODO: this doesn't work anymore for "this or that" because the window variable doesn't have the same value as the data-option
-  // so we are just going to arbitrarily guess the first one we see if the random guess preference is selected
-  clickOption(`#currentQuestionContainer .btOptionCard[data-option="${correctAnswer}"]`);
-  if (prefs.randomGuesses) clickOption('#currentQuestionContainer .btOptionCard');
-
-  // for some reason, testYourSmartsOption.onmouseup returns null
-  // as a workaround, parse the search URL from the attribute and manually go to it
-  const testYourSmartsOption = document.querySelector('#ListOfQuestionAndAnswerPanes div[id^=QuestionPane]:not(.wk_hideCompulsary) .wk_paddingBtm');
-  if (testYourSmartsOption) {
-    let smartsLink = testYourSmartsOption.getAttribute('onmouseup');
-    if (smartsLink) {
-      const startIndex = smartsLink.indexOf('/search');
-      if (startIndex !== -1) {
-        smartsLink = smartsLink.substring(startIndex, smartsLink.length - 2);
-        window.location.href = `https://bing.com${smartsLink}`;
+  if (prefs.autoClick) {
+    click('#rqStartQuiz');
+    clickOption('#currentQuestionContainer .b_cards[iscorrectoption=True]:not(.btsel)');
+    clickOption(`#currentQuestionContainer .rqOption:not(.optionDisable)[data-option="${correctAnswer}"]`);
+    clickOption('.bt_poll .btOption');
+    click('#OptionBackground00.b_hide');
+  
+    // TODO: this doesn't work anymore for "this or that" because the window variable doesn't have the same value as the data-option
+    // so we are just going to arbitrarily guess the first one we see if the random guess preference is selected
+    clickOption(`#currentQuestionContainer .btOptionCard[data-option="${correctAnswer}"]`);
+    if (prefs.randomGuesses) clickOption('#currentQuestionContainer .btOptionCard');
+  
+    // for some reason, testYourSmartsOption.onmouseup returns null
+    // as a workaround, parse the search URL from the attribute and manually go to it
+    const testYourSmartsOption = document.querySelector('#ListOfQuestionAndAnswerPanes div[id^=QuestionPane]:not(.wk_hideCompulsary) .wk_paddingBtm');
+    if (testYourSmartsOption) {
+      let smartsLink = testYourSmartsOption.getAttribute('onmouseup');
+      if (smartsLink) {
+        const startIndex = smartsLink.indexOf('/search');
+        if (startIndex !== -1) {
+          smartsLink = smartsLink.substring(startIndex, smartsLink.length - 2);
+          window.location.href = `https://bing.com${smartsLink}`;
+        }
       }
     }
+  
+    // this actually might not be necessary, but we can leave it in anyway
+    click('#ListOfQuestionAndAnswerPanes div[id^=AnswerPane]:not(.b_hide) input[type=submit]');
   }
-
-  // this actually might not be necessary, but we can leave it in anyway
-  click('#ListOfQuestionAndAnswerPanes div[id^=AnswerPane]:not(.b_hide) input[type=submit]');
 }
 
-let clickInterval;
-
 getStorage([
-  {
-    key: 'autoClick',
-    cb: autoClick => {
-      if (autoClick) {
-        clickInterval = setInterval(clickLoop, constants.CLICK_DELAY);
-      }
-    },
-  },
+  'autoClick',
   'randomGuesses',
-], prefs);
+], prefs).then(() => {
+  setInterval(clickLoop, constants.CLICK_DELAY);
+});
 
 hookStorage([
-  {
-    key: 'autoClick',
-    cb: autoClick => {
-      if (autoClick) {
-        clickInterval = setInterval(clickLoop, constants.CLICK_DELAY);
-      } else {
-        clearInterval(clickInterval);
-      }
-    },
-  },
+  'autoClick',
   'randomGuesses',
 ], prefs);

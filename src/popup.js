@@ -196,28 +196,27 @@ function startSearches(numIterations, platformSpoofing) {
 
 // id is HTML id attribute
 // elementKey is how to get the value of that element (depends on type of input)
-// preferenceKey the is key in chrome storage
-// defaultKey is key in the constants.DEFAULT_PREFERENCES
+// preferenceKey the is key in chrome storage and constants.DEFAULT_PREFERENCES
 const preferenceBindings = [
-  { id: 'num-iterations', elementKey: 'value', preferenceKey: 'numIterations', defaultKey: 'NUM_ITERATIONS' },
-  { id: 'delay', elementKey: 'value', preferenceKey: 'delay', defaultKey: 'DELAY' },
-  { id: 'random-search-iterations-min', elementKey: 'value', preferenceKey: 'randomSearchIterationsMin', defaultKey: 'RANDOM_SEARCH_ITERATIONS_MINIMUM' },
-  { id: 'random-search-iterations-max', elementKey: 'value', preferenceKey: 'randomSearchIterationsMax', defaultKey: 'RANDOM_SEARCH_ITERATIONS_MAXIMUM' },
-  { id: 'random-search-delay-min', elementKey: 'value', preferenceKey: 'randomSearchDelayMin', defaultKey: 'RANDOM_SEARCH_DELAY_MINIMUM' },
-  { id: 'random-search-delay-max', elementKey: 'value', preferenceKey: 'randomSearchDelayMax', defaultKey: 'RANDOM_SEARCH_DELAY_MAXIMUM' },
-  { id: 'auto-click', elementKey: 'checked', preferenceKey: 'autoClick', defaultKey: 'AUTO_CLICK' },
-  { id: 'random-guesses', elementKey: 'checked', preferenceKey: 'randomGuesses', defaultKey: 'RANDOM_GUESSES' },
-  { id: 'random-letters-search', elementKey: 'checked', preferenceKey: 'randomLettersSearch', defaultKey: 'RANDOM_LETTERS_SEARCH' },
-  { id: 'platform-spoofing', elementKey: 'value', preferenceKey: 'platformSpoofing', defaultKey: 'PLATFORM_SPOOFING' },
-  { id: 'random-search', elementKey: 'checked', preferenceKey: 'randomSearch', defaultKey: 'RANDOM_SEARCH' },
-  { id: 'blitz-search', elementKey: 'checked', preferenceKey: 'blitzSearch', defaultKey: 'BLITZ_SEARCH' },
+  { id: 'num-iterations', elementKey: 'value', preferenceKey: 'numIterations' },
+  { id: 'delay', elementKey: 'value', preferenceKey: 'delay' },
+  { id: 'random-search-iterations-min', elementKey: 'value', preferenceKey: 'randomSearchIterationsMin' },
+  { id: 'random-search-iterations-max', elementKey: 'value', preferenceKey: 'randomSearchIterationsMax' },
+  { id: 'random-search-delay-min', elementKey: 'value', preferenceKey: 'randomSearchDelayMin' },
+  { id: 'random-search-delay-max', elementKey: 'value', preferenceKey: 'randomSearchDelayMax' },
+  { id: 'auto-click', elementKey: 'checked', preferenceKey: 'autoClick' },
+  { id: 'random-guesses', elementKey: 'checked', preferenceKey: 'randomGuesses' },
+  { id: 'random-letters-search', elementKey: 'checked', preferenceKey: 'randomLettersSearch' },
+  { id: 'platform-spoofing', elementKey: 'value', preferenceKey: 'platformSpoofing' },
+  { id: 'random-search', elementKey: 'checked', preferenceKey: 'randomSearch' },
+  { id: 'blitz-search', elementKey: 'checked', preferenceKey: 'blitzSearch' },
 ];
 
 // load the saved values from the Chrome storage API
 chrome.storage.local.get(preferenceBindings.map(({ preferenceKey }) => preferenceKey), result => {
-  preferenceBindings.forEach(({ id, elementKey, preferenceKey, defaultKey }) => {
+  preferenceBindings.forEach(({ id, elementKey, preferenceKey }) => {
     // value could be false, in which case the shortcut || operator would evaluate to the default (not intended)
-    document.getElementById(id)[elementKey] = result[preferenceKey] === undefined ? constants.DEFAULT_PREFERENCES[defaultKey] : result[preferenceKey];
+    document.getElementById(id)[elementKey] = result[preferenceKey] === undefined ? constants.DEFAULT_PREFERENCES[preferenceKey] : result[preferenceKey];
   });
   updateSearchInputsVisibility();
 });
@@ -234,13 +233,13 @@ function saveChanges() {
 function reset(e) {
   e.preventDefault(); // the reset button is actually a link, so we don't want it to redirect
   if (document.getElementById('random-search').checked) {
-    document.getElementById('random-search-iterations-min').value = constants.DEFAULT_PREFERENCES.RANDOM_SEARCH_ITERATIONS_MINIMUM;
-    document.getElementById('random-search-iterations-max').value = constants.DEFAULT_PREFERENCES.RANDOM_SEARCH_ITERATIONS_MAXIMUM;
-    document.getElementById('random-search-delay-min').value = constants.DEFAULT_PREFERENCES.RANDOM_SEARCH_DELAY_MINIMUM;
-    document.getElementById('random-search-delay-max').value = constants.DEFAULT_PREFERENCES.RANDOM_SEARCH_DELAY_MAXIMUM;
+    document.getElementById('random-search-iterations-min').value = constants.DEFAULT_PREFERENCES.randomSearchIterationsMin;
+    document.getElementById('random-search-iterations-max').value = constants.DEFAULT_PREFERENCES.randomSearchIterationsMax;
+    document.getElementById('random-search-delay-min').value = constants.DEFAULT_PREFERENCES.randomSearchDelayMin;
+    document.getElementById('random-search-delay-max').value = constants.DEFAULT_PREFERENCES.randomSearchDelayMax;
   } else {
-    document.getElementById('num-iterations').value = constants.DEFAULT_PREFERENCES.NUM_ITERATIONS;
-    document.getElementById('delay').value = constants.DEFAULT_PREFERENCES.DELAY;
+    document.getElementById('num-iterations').value = constants.DEFAULT_PREFERENCES.numIterations;
+    document.getElementById('delay').value = constants.DEFAULT_PREFERENCES.delay;
   }
   saveChanges();
 }
