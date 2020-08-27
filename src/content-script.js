@@ -61,10 +61,16 @@ function clickLoop() {
     clickOption('.bt_poll .btOption');
     click('#OptionBackground00.b_hide');
   
-    // TODO: this doesn't work anymore for "this or that" because the window variable doesn't have the same value as the data-option
-    // so we are just going to arbitrarily guess the first one we see if the random guess preference is selected
+    // the correctAnswer variable doesn't work anymore for "this or that"
+    // because the window variable doesn't have the same value as the data-option
     clickOption(`#currentQuestionContainer .btOptionCard[data-option="${correctAnswer}"]`);
+
+    // either guess randomly or attempt the correct guess (only works on mobile view)
+    // but at least give the option to guess randomly instead of forcing it to be correct
+    // since this is a risky thing to get 100% correct
     if (prefs.randomGuesses) clickOption('#currentQuestionContainer .btOptionCard');
+    else click('.bt_correctOp'); // only works on mobile view
+
   
     // for some reason, testYourSmartsOption.onmouseup returns null
     // as a workaround, parse the search URL from the attribute and manually go to it
