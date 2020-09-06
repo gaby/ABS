@@ -22,7 +22,7 @@ const constants = Object.freeze({
     ACTIVELY_SEARCHING_MOBILE: 1,
     SET_LAST_SEARCH: 2,
   }),
-  CORS_PROXY_URL: 'https://cors-anywhere.herokuapp.com/',
+  CORS_PROXY_URL: 'https://cors-anywhere-mikeyaworski.herokuapp.com/',
   DAILY_TRENDS_API: 'https://trends.google.com/trends/api/dailytrends?geo=US',
   NUM_DAILY_TREND_FETCHES: 4,
   // TODO: add more user agents
