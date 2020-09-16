@@ -23,16 +23,22 @@ function clickOption(selector, parent = document) {
   if (e && e.getAttribute('data-serpquery')) e.click();
 }
 
-function clickElement(e) {
+function clickElement(e, checkVisibility = true) {
+  if (!e) return;
   // e.offsetParent checks that the element (and its parents) do not have the style property 'display: none'
   // https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetParent
   // this will break if e has style property 'position: fixed', but that shouldn't happen
-  if (e && e.offsetParent) e.click();
+  if (!checkVisibility || e.offsetParent) e.click();
 }
 
 function click(selector, parent = document) {
   const e = parent.querySelector(selector);
   clickElement(e);
+}
+
+function clickHidden(selector, parent = document) {
+  const e = parent.querySelector(selector);
+  clickElement(e, false);
 }
 
 function clickAll(selector, parent = document) {
@@ -59,7 +65,10 @@ function clickLoop() {
     clickOption('#currentQuestionContainer .b_cards[iscorrectoption=True]:not(.btsel)');
     clickOption(`#currentQuestionContainer .rqOption:not(.optionDisable)[data-option="${correctAnswer}"]`);
     clickOption('.bt_poll .btOption');
-    click('#OptionBackground00.b_hide');
+
+    // click the hidden element here since options are only available while the background is hidden.
+    // once the background is not hidden, that means the results are being shown.
+    clickHidden('#OptionBackground00.b_hide');
   
     // the correctAnswer variable doesn't work anymore for "this or that"
     // because the window variable doesn't have the same value as the data-option
