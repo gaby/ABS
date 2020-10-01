@@ -1,10 +1,10 @@
-# Automated Bing Searches
-Simple chrome extension to run a specific number of Bing searches by just clicking a button. This is useful for collecting Microsoft Reward Points.
+# ABS
+Chrome Extension and Firefox Addon to automatically perform a number of daily searches and collect bonus reward points.
 
-![](/screenshots/popout.png)
+![](/screenshots/popup.png)
 
-Chrome Extension: https://chrome.google.com/webstore/detail/automated-bing-searches/ipbgaooglppjombmbgebgmaehjkfabme
-Firefox Addon: https://addons.mozilla.org/en-US/firefox/addon/automated-bing-searches/
+Chrome Extension: https://chrome.google.com/webstore/detail/abs/ipbgaooglppjombmbgebgmaehjkfabme
+Firefox Addon: https://addons.mozilla.org/en-CA/firefox/addon/abs/
 
 <a href="https://www.buymeacoffee.com/mikeyaworski" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-green.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 

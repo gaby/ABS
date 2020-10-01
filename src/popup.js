@@ -107,7 +107,7 @@ function startSearches(numIterations, platformSpoofing) {
     mobileSpoof(true);
   }
 
-  // - redirects to Bing search with a query
+  // - redirects to search with a query
   // - sends message over the port to switch to mobile spoofing once required
   // - returns an array of overall search counts, desktop counts and mobile counts 
   const search = (() => {
