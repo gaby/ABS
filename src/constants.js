@@ -18,9 +18,11 @@ const constants = Object.freeze({
     platformSpoofing: 'desktop-and-mobile',
   }),
   MESSAGE_TYPES: Object.freeze({
-    SPOOF_USER_AGENT: 0,
-    ACTIVELY_SEARCHING_MOBILE: 1,
-    SET_LAST_SEARCH: 2,
+    START_SEARCH: 0, // popup => background script
+    STOP_SEARCH: 1, // popup => background script
+    GET_SEARCH_COUNTS: 2, // popup => background script
+    UPDATE_SEARCH_COUNTS: 3, // background script => popup
+    CLEAR_SEARCH_COUNTS: 4, // background script => popup
   }),
   CORS_PROXY_URL: 'https://cors-anywhere-mikeyaworski.herokuapp.com/',
   DAILY_TRENDS_API: 'https://trends.google.com/trends/api/dailytrends?geo=US',

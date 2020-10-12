@@ -6,10 +6,28 @@
   "icons": { "16": "icons/icon16.png", "48": "icons/icon48.png", "128": "icons/icon128.png" },
   "content_scripts": [{
     "matches": ["https://*.bing.com/*", "https://account.microsoft.com/rewards/*"],
-    "js": ["script-injector.js", "constants.js", "utils.js", "chrome-utils.js", "content-script.js"]
+    "js": [
+      "script-injector.js",
+      "constants.js",
+      "utils.js",
+      "chrome-utils.js",
+      "content-script.js"
+    ]
   }],
   "background": {
-    "scripts": ["constants.js", "utils.js", "chrome-utils.js", "background.js"],
+    "scripts": [
+      "constants.js",
+      "utils.js",
+      "data.js",
+      "query-templates.js",
+      "chrome-utils.js",
+      "background/prefs.js",
+      "background/daily-queries.js",
+      "background/reminder.js",
+      "background/spoof.js",
+      "background/search.js",
+      "background/messages.js"
+    ],
     "persistent": true
   },
   "browser_action": {
