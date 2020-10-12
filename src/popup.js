@@ -8,7 +8,6 @@ const iterationCount2 = document.getElementById('iteration-count-2');
 const iterationCountWrapper = document.getElementById('iteration-count-wrapper');
 
 // if we are spoofing desktop searches, show a count labelled 'desktop'. same for mobile.
-// if we are doing mobile and desktop searches, get the remaining count from half of the numIterations, since the numIterations includes both
 // if we are not spoofing anything, then just display an unlabelled count.
 function setCountDisplayText({
   numIterations,
@@ -73,7 +72,8 @@ function updateSearchInputsVisibility() {
 // elementKey is how to get the value of that element (depends on type of input)
 // preferenceKey the is key in chrome storage and constants.DEFAULT_PREFERENCES
 const preferenceBindings = [
-  { id: 'num-iterations', elementKey: 'value', preferenceKey: 'numIterations' },
+  { id: 'desktop-iterations', elementKey: 'value', preferenceKey: 'desktopIterations' },
+  { id: 'mobile-iterations', elementKey: 'value', preferenceKey: 'mobileIterations' },
   { id: 'delay', elementKey: 'value', preferenceKey: 'delay' },
   { id: 'random-search-iterations-min', elementKey: 'value', preferenceKey: 'randomSearchIterationsMin' },
   { id: 'random-search-iterations-max', elementKey: 'value', preferenceKey: 'randomSearchIterationsMax' },
@@ -117,7 +117,8 @@ function reset(e) {
     document.getElementById('random-search-delay-min').value = constants.DEFAULT_PREFERENCES.randomSearchDelayMin;
     document.getElementById('random-search-delay-max').value = constants.DEFAULT_PREFERENCES.randomSearchDelayMax;
   } else {
-    document.getElementById('num-iterations').value = constants.DEFAULT_PREFERENCES.numIterations;
+    document.getElementById('desktop-iterations').value = constants.DEFAULT_PREFERENCES.desktopIterations;
+    document.getElementById('mobile-iterations').value = constants.DEFAULT_PREFERENCES.mobileIterations;
     document.getElementById('delay').value = constants.DEFAULT_PREFERENCES.delay;
   }
   saveChanges();
@@ -127,7 +128,8 @@ function reset(e) {
 // eventType is the type of event to listen for
 // fn is what to run when the event occurs (defaults to saveChanges)
 const changeBindings = [
-  { id: 'num-iterations', eventType: 'input' },
+  { id: 'desktop-iterations', eventType: 'input' },
+  { id: 'mobile-iterations', eventType: 'input' },
   { id: 'delay', eventType: 'input' },
   { id: 'random-search', eventType: 'change' },
   { id: 'random-search-iterations-min', eventType: 'input' },

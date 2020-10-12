@@ -59,23 +59,28 @@ function startSearches(tabId) {
   const { platformSpoofing } = prefs;
   const minInterations = Number(prefs.randomSearchIterationsMin);
   const maxIterations = Number(prefs.randomSearchIterationsMax);
-  let numIterations = prefs.randomSearch ? random(minInterations, maxIterations) : Number(prefs.numIterations);
+  let desktopIterations = prefs.randomSearch ? random(minInterations, maxIterations) : Number(prefs.desktopIterations);
+  let mobileIterations = prefs.randomSearch ? random(minInterations, maxIterations) : Number(prefs.mobileIterations);
 
   // send messages over the port to initiate spoofing based on the preference
   if (platformSpoofing === 'none' || !platformSpoofing) {
     spoof(false);
     mobileSpoof(false);
+    mobileIterations = 0;
   } else if (platformSpoofing === 'desktop-and-mobile') {
-    numIterations *= 2;
     spoof(true);
     mobileSpoof(false);
   } else if (platformSpoofing === 'desktop-only') {
     spoof(true);
     mobileSpoof(false);
+    mobileIterations = 0;
   } else if (platformSpoofing === 'mobile-only') {
     spoof(true);
     mobileSpoof(true);
+    desktopIterations = 0;
   }
+
+  const numIterations = desktopIterations + mobileIterations;
 
   // - redirects to search with a query
   // - sends message over the port to switch to mobile spoofing once required
@@ -126,8 +131,8 @@ function startSearches(tabId) {
     const [overallCount, desktopCount, mobileCount] = counts;
     const containsDesktop = platformSpoofing.includes('desktop');
     const containsMobile = platformSpoofing.includes('mobile');
-    const desktopRemaining = (platformSpoofing === 'desktop-and-mobile' ? numIterations / 2 : numIterations) - desktopCount;
-    const mobileRemaining = (platformSpoofing === 'desktop-and-mobile' ? numIterations / 2 : numIterations) - mobileCount;
+    const desktopRemaining = desktopIterations - desktopCount;
+    const mobileRemaining = mobileIterations - mobileCount;
     sendMessage({
       type: constants.MESSAGE_TYPES.UPDATE_SEARCH_COUNTS,
       numIterations,
@@ -150,7 +155,7 @@ function startSearches(tabId) {
       currentDelay = random(minDelay, maxDelay);
     }
 
-    const isMobile = platformSpoofing === 'mobile-only' || (platformSpoofing === 'desktop-and-mobile' && counts && counts[0] >= numIterations / 2);
+    const isMobile = platformSpoofing === 'mobile-only' || (platformSpoofing === 'desktop-and-mobile' && counts && counts[0] >= desktopIterations);
     counts = await search(isMobile);
 
     // This is to address the issue where you stop the searches while the page is loading (or start searches in another tab)

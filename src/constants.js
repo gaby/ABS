@@ -4,7 +4,8 @@ const constants = Object.freeze({
   BADGE_REMINDER_TEXT: '!',
   CLICK_DELAY: 500,
   DEFAULT_PREFERENCES: Object.freeze({
-    numIterations: 35,
+    desktopIterations: 35,
+    mobileIterations: 25,
     delay: 1000,
     autoClick: true,
     randomGuesses: false,
