@@ -17,6 +17,10 @@ const constants = Object.freeze({
     randomLettersSearch: false,
     blitzSearch: false,
     platformSpoofing: 'desktop-and-mobile',
+    customQueries: '',
+    searchWithCustomQueries: false,
+    searchWithDailyTrends: true,
+    searchWithTemplates: true,
   }),
   MESSAGE_TYPES: Object.freeze({
     START_SEARCH: 0, // popup => background script

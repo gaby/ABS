@@ -13,29 +13,6 @@ function updateLastSearch() {
   setStorage('lastSearch', Date.now()).then(updateReminderTimeout);
 }
 
-function getSearchQuery(randomLettersSearch = false) {
-  if (randomLettersSearch) return Math.random().toString(36).substr(2);
-
-  // try using a daily trend query. if there are none or we run into a duplicate, just fallback to the hardcoded queries
-  if (dailyTrendQueries.length > 0) {
-    const query = getRandomElement(dailyTrendQueries);
-    if (!usedDailyQueries.has(query)) {
-      usedDailyQueries.add(query);
-      return query;
-    }
-  }
-
-  const queryTemplate = getRandomElement(queryTemplates);
-  const variables = queryTemplate.template.match(/(\$\d+)/g); // variables are $1, $2, ... where the digit is the ID of the variable
-  const query = variables.reduce((acc, variable, i) => {
-    const type = queryTemplate.types[i];
-    const value = getRandomElement(types[type]);
-    return acc.replace(variable, value);
-  }, queryTemplate.template);
-
-  return query;
-}
-
 
 // scoped globally so that we can return it when fetching from popup
 let counts = [0, 0, 0];
@@ -97,7 +74,7 @@ function startSearches(tabId) {
       overallCount++;
 
       return new Promise(resolve => {
-        const query = getSearchQuery(prefs.randomLettersSearch);
+        const query = getSearchQuery();
         chrome.tabs.update(tabId, {
           url: `https://bing.com/search?q=${query}`,
         });

@@ -39,6 +39,10 @@ input {
   color: white;
 }
 
+select {
+  margin-bottom: 8px;
+}
+
 input:focus {
   outline: none;
 }
@@ -76,10 +80,6 @@ input[type="button"] {
 
 input[type="button"]:hover {
   background-color: #388e3c;
-}
-
-#go {
-  margin-top: 5px;
 }
 
 a:visited {

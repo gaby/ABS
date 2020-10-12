@@ -81,7 +81,6 @@ const preferenceBindings = [
   { id: 'random-search-delay-max', elementKey: 'value', preferenceKey: 'randomSearchDelayMax' },
   { id: 'auto-click', elementKey: 'checked', preferenceKey: 'autoClick' },
   { id: 'random-guesses', elementKey: 'checked', preferenceKey: 'randomGuesses' },
-  { id: 'random-letters-search', elementKey: 'checked', preferenceKey: 'randomLettersSearch' },
   { id: 'platform-spoofing', elementKey: 'value', preferenceKey: 'platformSpoofing' },
   { id: 'random-search', elementKey: 'checked', preferenceKey: 'randomSearch' },
   { id: 'blitz-search', elementKey: 'checked', preferenceKey: 'blitzSearch' },
@@ -124,6 +123,15 @@ function reset(e) {
   saveChanges();
 }
 
+function openOptions(e) {
+  e.preventDefault(); // the open-options button is actually a link, so we don't want it to redirect
+  if (chrome.runtime.openOptionsPage) {
+    chrome.runtime.openOptionsPage();
+  } else {
+    window.open(chrome.runtime.getURL('options.html'));
+  }
+}
+
 // id is HTML id attribute
 // eventType is the type of event to listen for
 // fn is what to run when the event occurs (defaults to saveChanges)
@@ -138,10 +146,10 @@ const changeBindings = [
   { id: 'random-search-delay-max', eventType: 'input' },
   { id: 'auto-click', eventType: 'change' },
   { id: 'random-guesses', eventType: 'change' },
-  { id: 'random-letters-search', eventType: 'change' },
-  { id: 'blitz-search', eventType: 'change' },
   { id: 'platform-spoofing', eventType: 'change' },
+  { id: 'blitz-search', eventType: 'change' },
   { id: 'reset', eventType: 'click', fn: reset },
+  { id: 'open-options', eventType: 'click', fn: openOptions },
   { id: 'stop', eventType: 'click', fn: stopSearches },
 ];
 

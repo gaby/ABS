@@ -1,0 +1,39 @@
+body {
+  background-color: #424242;
+  color: white;
+  padding: 18px;
+  margin: 0px;
+  font-size: 16px;
+}
+
+hr {
+  width: 100%;
+  max-width: 300px;
+  margin-left: 0;
+}
+
+textarea {
+  width: 300px;
+}
+
+textarea:focus {
+  outline: none;
+}
+
+label {
+  display: flex;
+  cursor: pointer;
+}
+
+.row {
+  display: flex;
+}
+
+.option-wrapper {
+  margin-top: 5px;
+  display: flex;
+}
+
+.option-wrapper input {
+  margin-right: 5px;
+}

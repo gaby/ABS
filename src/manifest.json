@@ -22,7 +22,7 @@
       "query-templates.js",
       "chrome-utils.js",
       "background/prefs.js",
-      "background/daily-queries.js",
+      "background/queries.js",
       "background/reminder.js",
       "background/spoof.js",
       "background/search.js",
@@ -30,8 +30,13 @@
     ],
     "persistent": true
   },
+  "content_security_policy": "script-src 'self' https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js; object-src 'self'",
   "browser_action": {
     "default_popup": "popup.html"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
   },
   "commands": {
     "start-searches": {
