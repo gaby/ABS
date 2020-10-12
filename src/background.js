@@ -1,3 +1,8 @@
+function setBadgeReminder() {
+  chrome.browserAction.setBadgeText({ text: constants.BADGE_REMINDER_TEXT });
+  chrome.browserAction.setBadgeBackgroundColor({ color: constants.BADGE_COLOR });
+}
+
 let searchReminderTimeout;
 function updateTimeout() {
   getStorage([{
@@ -7,9 +12,9 @@ function updateTimeout() {
       const timeSinceLastSearch = Date.now() - lastSearch;
       if (lastSearch && timeSinceLastSearch < constants.ONE_DAY_MILLIS) {
         clearBadge();
-        searchReminderTimeout = setTimeout(fillBadge, constants.ONE_DAY_MILLIS - timeSinceLastSearch);
+        searchReminderTimeout = setTimeout(setBadgeReminder, constants.ONE_DAY_MILLIS - timeSinceLastSearch);
       } else {
-        fillBadge();
+        setBadgeReminder();
       }
     }
   }])
