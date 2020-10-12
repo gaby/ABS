@@ -31,9 +31,9 @@ function hookStorage(storageKeys, storage) {
  * Also returns a Promise for convenience.
  *
  * @param {Array<string | Object>} storageKeys
- * @param {Object} storage?
+ * @param {Object?} storage
  *
- * @returns Promise<Array> - Promise which resolves to an array with the order corresponding to the storageKeys order.
+ * @returns {Promise<Object>} Promise which resolves to a mapping of storage key to the value
  */
 async function getStorage(storageKeys, storage) {
   return new Promise((resolve, reject) => {
@@ -42,7 +42,7 @@ async function getStorage(storageKeys, storage) {
         reject(chrome.runtime.lastError);
         return;
       }
-      resolve(storageKeys.map(storageKey => {
+      resolve(storageKeys.reduce((acc, storageKey) => {
         // it's either a string or an object of the form { key, cb }
         if (typeof storageKey === 'string') {
           if (!storage) return res[storageKey];
@@ -52,18 +52,24 @@ async function getStorage(storageKeys, storage) {
         }
         const { key, cb } = storageKey;
         cb(res[key]);
-        return res[key];
-      }));
+        return { ...acc, [storageKey]: res[key] };
+      }, {}));
     });
   });
 }
 
 /**
- * Sets a local storage value.
+ * Sets a local storage value or set of values.
+ * @param {string | Object} keyOrMap Either a string (representing a key, in which case val must be provided)
+ *   or an object with key-value-pair mappings for storing.
+ * @param {any?} val The value associated with key, iff key is a string.
  */
-async function setStorage(key, val) {
+async function setStorage(keyOrMap, val) {
   return new Promise((resolve, reject) => {
-    chrome.storage.local.set({ [key]: val }, () => {
+    const options = typeof keyOrMap === 'string'
+      ? { [keyOrMap]: val }
+      : keyOrMap;
+    chrome.storage.local.set(options, () => {
       if (chrome.runtime.lastError) {
         reject(chrome.runtime.lastError);
         return;
