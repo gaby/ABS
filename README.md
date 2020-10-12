@@ -11,5 +11,4 @@ Firefox Addon: https://addons.mozilla.org/en-CA/firefox/addon/abs/
 
 ## Upcoming Features
 
-- options page for inputting your own queries to choose from
 - scheduling searches
