@@ -175,7 +175,6 @@ document.getElementById('open-reward-tasks').addEventListener('click', async () 
   function openRewardTasks() {
     chrome.tabs.sendMessage(tab.id, { type: 'OPEN_REWARD_TASKS' });
   }
-  stopSearches();
   if (tab && tab.url.includes('https://account.microsoft.com/rewards')) {
       openRewardTasks();
   } else {
