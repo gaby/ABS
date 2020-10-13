@@ -43,7 +43,7 @@ function clickHidden(selector, parent = document) {
 
 function clickAll(selector, parent = document) {
   const elements = [...parent.querySelectorAll(selector)];
-  elements.forEach(clickElement);
+  elements.forEach(e => clickElement(e, true));
 }
 
 function clickLoop() {
