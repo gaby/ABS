@@ -37,3 +37,16 @@ function getCurrentTab() {
     });
   });
 }
+
+function getDateFromTime(time) {
+  const date = new Date();
+  const [hourStr, minStr] = time.split(':');
+  date.setHours(Number(hourStr), Number(minStr), 0);
+  return date;
+}
+
+function getMidnightDate() {
+  const date = new Date();
+  date.setHours(0, 0, 0);
+  return date;
+}

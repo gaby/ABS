@@ -21,6 +21,8 @@ const constants = Object.freeze({
     searchWithCustomQueries: false,
     searchWithDailyTrends: true,
     searchWithTemplates: true,
+    scheduleSearches: false,
+    scheduledTime: '18:00',
   }),
   MESSAGE_TYPES: Object.freeze({
     START_SEARCH: 0, // popup => background script

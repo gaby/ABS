@@ -26,6 +26,7 @@
       "background/reminder.js",
       "background/spoof.js",
       "background/search.js",
+      "background/schedule.js",
       "background/messages.js"
     ],
     "persistent": true

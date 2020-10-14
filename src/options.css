@@ -17,7 +17,7 @@ textarea {
   width: 300px;
 }
 
-textarea:focus {
+textarea:focus, input:focus {
   outline: none;
 }
 
@@ -37,4 +37,9 @@ label {
 
 .option-wrapper input {
   margin-right: 5px;
+}
+
+.text-secondary {
+  color: #79D6B5;
+  font-size: 0.9rem;
 }
