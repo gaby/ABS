@@ -11,4 +11,4 @@ Firefox Addon: https://addons.mozilla.org/en-CA/firefox/addon/abs/
 
 ## Upcoming Features
 
-- scheduling searches
+Nothing currently planned. Please open an issue if you have any ideas!
