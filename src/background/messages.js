@@ -5,9 +5,7 @@ chrome.runtime.onConnect.addListener(port => {
   port.onMessage.addListener(async msg => {
     switch (msg.type) {
       case constants.MESSAGE_TYPES.START_SEARCH: {
-        stopSearches();
         const tab = await getCurrentTab();
-        updateLastSearch();
         startSearches(tab.id);
         break;
       }

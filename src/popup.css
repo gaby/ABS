@@ -43,7 +43,7 @@ select {
   margin-bottom: 8px;
 }
 
-input:focus {
+input:focus, select:focus {
   outline: none;
 }
 

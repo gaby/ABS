@@ -3,6 +3,9 @@ function setBadgeReminder() {
   chrome.browserAction.setBadgeBackgroundColor({ color: constants.BADGE_COLOR });
 }
 
+/**
+ * Meant to be called after every search
+ */
 let searchReminderTimeout;
 function updateReminderTimeout() {
   getStorage([{
@@ -17,6 +20,6 @@ function updateReminderTimeout() {
         setBadgeReminder();
       }
     }
-  }])
+  }]);
 }
 updateReminderTimeout();

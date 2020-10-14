@@ -31,6 +31,8 @@ function stopSearches() {
 }
 
 function startSearches(tabId) {
+  stopSearches();
+  updateLastSearch();
   currentSearchingTabId = tabId;
 
   const { platformSpoofing } = prefs;

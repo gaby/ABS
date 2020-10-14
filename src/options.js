@@ -39,7 +39,7 @@ getStorage(
         : value;
     },
   })),
-)
+);
 
 changeBindings.forEach(({ id, eventType }) => {
   document.getElementById(id).addEventListener(eventType, saveChanges);
