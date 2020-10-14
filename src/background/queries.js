@@ -41,9 +41,13 @@ function fetchDailyTrendQueries() {
       date = date.toISOString();
       date = date.substring(0, date.indexOf('T')).replace(/-/g, '');
       fetch(`${constants.CORS_PROXY_URL}${constants.DAILY_TRENDS_API}&ed=${date}`)
-        .then(r => r.text())
+        .then(r => {
+          if (!r.ok) throw 'Fetching daily queries failed';
+          return r.text();
+        })
         .then(handleResult)
-        .then(updateQueries);
+        .then(updateQueries)
+        .catch(console.error);
     }
   } catch (err) {
     // log the error, but do nothing and default to the hardcoded queries
