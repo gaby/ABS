@@ -45,14 +45,14 @@ async function getStorage(storageKeys, storage) {
       resolve(storageKeys.reduce((acc, storageKey) => {
         // it's either a string or an object of the form { key, cb }
         if (typeof storageKey === 'string') {
-          if (!storage) return res[storageKey];
+          if (!storage) return { ...acc, [storageKey]: res[storageKey] };
           if (res[storageKey] !== undefined) storage[storageKey] = res[storageKey];
           else storage[storageKey] = constants.DEFAULT_PREFERENCES[storageKey];
-          return res[storageKey];
+          return { ...acc, [storageKey]: res[storageKey] };
         }
         const { key, cb } = storageKey;
         cb(res[key]);
-        return { ...acc, [storageKey]: res[key] };
+        return { ...acc, [key]: res[key] };
       }, {}));
     });
   });
