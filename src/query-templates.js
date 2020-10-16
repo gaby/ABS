@@ -24,6 +24,10 @@ const queryTemplates = [
     types: ['person'],
   },
   {
+    template: '$1 $2',
+    types: ['person', 'socialMedia'],
+  },
+  {
     template: '$1 calories',
     types: ['food'],
   },
@@ -37,4 +41,5 @@ const types = {
   animal: animals,
   person: people,
   food: food,
-}
+  socialMedia: socialMedias,
+};
