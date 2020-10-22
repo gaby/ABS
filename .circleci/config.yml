@@ -24,10 +24,15 @@ jobs:
             fi
       - run:
           name: "Sign & Upload Firefox Addon"
-          # || true so that even when the signing fails for listed addons, the build will not fail
-          # (signing will always fail since the addon will always be pending review)
+          # Use || true so that even when the signing fails for listed addons, the build will not fail
+          # (signing will always fail since the addon will always be pending review).
+          #
+          # And this is a hacky solution to remove "incognito": "split" from the manifest, but
+          # this is better than maintaining two separate manifests which differ by only this line
+          # (Firefox does not support "incognito": "split").
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               cd src
+              sed -i '/"incognito": "split",/d' ./manifest.json
               web-ext sign --id="${FF_APP_ID}" --api-key="${FF_JWT_ISSUER}" --api-secret="${FF_JWT_SECRET}" || true
             fi
