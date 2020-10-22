@@ -4,6 +4,21 @@ function startSearchesInNewTab() {
   chrome.tabs.create({ active: false }, tab => {
     startSearches(tab.id);
   });
+  getStorage(['scheduledTimeOpensRewardTasks']).then(({ scheduledTimeOpensRewardTasks }) => {
+    if (!scheduledTimeOpensRewardTasks) return;
+    chrome.tabs.create({ url: constants.REWARDS_URL, active: false }, newTab => {
+      function listener(updatedTabId, info, updatedTab) {
+        if (newTab.id === updatedTabId && info.status === 'complete' && updatedTab.url.includes(constants.REWARDS_URL)) {
+          chrome.tabs.executeScript(newTab.id, {
+            file: '/content-scripts/open-reward-tasks.js',
+          }, () => {
+            chrome.tabs.onUpdated.removeListener(listener);
+          });
+        }
+      }
+      chrome.tabs.onUpdated.addListener(listener);
+    });
+  })
 }
 
 /**

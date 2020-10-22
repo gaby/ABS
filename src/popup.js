@@ -172,23 +172,27 @@ document.getElementById('search').addEventListener('click', startSearches);
 
 document.getElementById('open-reward-tasks').addEventListener('click', async () => {
   function openRewardTasks() {
-    chrome.tabs.executeScript({
-      file: 'content-scripts/open-reward-tasks.js',
+    return new Promise(resolve => {
+      chrome.tabs.executeScript({
+        file: '/content-scripts/open-reward-tasks.js',
+      }, resolve);
     });
   }
 
   const tab = await getCurrentTab();
-  if (tab && tab.url.includes('https://account.microsoft.com/rewards')) {
+  if (tab && tab.url.includes(constants.REWARDS_URL)) {
     openRewardTasks();
   } else {
     chrome.tabs.update({
-      url: 'https://account.microsoft.com/rewards',
+      url: constants.REWARDS_URL,
     }, () => {
-      chrome.tabs.onUpdated.addListener((updatedTabId, info) => {
-        if (tab.id === updatedTabId && info.status === 'complete') {
-          openRewardTasks();
+      async function listener(updatedTabId, info, updatedTab) {
+        if (tab.id === updatedTabId && info.status === 'complete' && updatedTab.url.includes(constants.REWARDS_URL)) {
+          await openRewardTasks();
+          chrome.tabs.onUpdated.removeListener(listener);
         }
-      });
+      }
+      chrome.tabs.onUpdated.addListener(listener);
     });
   }
 });

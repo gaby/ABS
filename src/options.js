@@ -9,6 +9,7 @@ const preferenceBindings = [
   { id: 'search-with-templates', elementKey: 'checked', preferenceKey: 'searchWithTemplates' },
   { id: 'schedule-daily-searches', elementKey: 'checked', preferenceKey: 'scheduleSearches' },
   { id: 'scheduled-time', elementKey: 'value', preferenceKey: 'scheduledTime' },
+  { id: 'scheduled-time-open-reward-tasks', elementKey: 'checked', preferenceKey: 'scheduledTimeOpensRewardTasks' },
 ];
 
 // id is HTML id attribute
@@ -22,6 +23,7 @@ const changeBindings = [
   { id: 'search-with-templates', eventType: 'change' },
   { id: 'schedule-daily-searches', eventType: 'change' },
   { id: 'scheduled-time', eventType: 'change' },
+  { id: 'scheduled-time-open-reward-tasks', eventType: 'change' },
 ];
 
 function saveChanges() {

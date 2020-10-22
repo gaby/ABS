@@ -23,6 +23,7 @@ const constants = Object.freeze({
     searchWithTemplates: true,
     scheduleSearches: false,
     scheduledTime: '18:00',
+    scheduledTimeOpensRewardTasks: false,
   }),
   MESSAGE_TYPES: Object.freeze({
     START_SEARCH: 0, // popup => background script
@@ -31,6 +32,7 @@ const constants = Object.freeze({
     UPDATE_SEARCH_COUNTS: 3, // background script => popup
     CLEAR_SEARCH_COUNTS: 4, // background script => popup
   }),
+  REWARDS_URL: 'https://account.microsoft.com/rewards/',
   CORS_PROXY_URL: 'https://cors-anywhere-mikeyaworski.herokuapp.com/',
   DAILY_TRENDS_API: 'https://trends.google.com/trends/api/dailytrends?geo=US',
   NUM_DAILY_TREND_FETCHES: 4,
