@@ -3,19 +3,6 @@ document.addEventListener('CORRECT_ANSWER_RECEIVED', e => {
   correctAnswer = e.detail;
 });
 
-let shouldOpenRewardTasks;
-chrome.runtime.onMessage.addListener((request, sender, cb) => {
-  switch(request.type) {
-    case 'OPEN_REWARD_TASKS': {
-      shouldOpenRewardTasks = true;
-      break;
-    }
-    default: {
-      break;
-    }
-  }
-});
-
 const prefs = { ...constants.DEFAULT_PREFERENCES };
 
 function clickOption(selector, parent = document) {
@@ -41,25 +28,7 @@ function clickHidden(selector, parent = document) {
   clickElement(e, false);
 }
 
-function clickAll(selector, parent = document) {
-  const elements = [...parent.querySelectorAll(selector)];
-  elements.forEach(e => clickElement(e, true));
-}
-
 function clickLoop() {
-  if (shouldOpenRewardTasks) {
-    const cards = [...document.querySelectorAll('mee-card')];
-    if (cards.length) {
-      // we're actually on the rewards page now, so no need to keep trying to open tasks after this attempt
-      shouldOpenRewardTasks = false;
-      cards.forEach(card => {
-        if (card.querySelector('.mee-icon-AddMedium')) {
-          clickAll('a.c-call-to-action', card);
-        }
-      });
-    }
-  }
-
   if (prefs.autoClick) {
     click('#rqStartQuiz');
     clickOption('#currentQuestionContainer .b_cards[iscorrectoption=True]:not(.btsel)');

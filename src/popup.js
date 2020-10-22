@@ -171,12 +171,15 @@ chrome.commands.onCommand.addListener(command => {
 document.getElementById('search').addEventListener('click', startSearches);
 
 document.getElementById('open-reward-tasks').addEventListener('click', async () => {
-  const tab = await getCurrentTab();
   function openRewardTasks() {
-    chrome.tabs.sendMessage(tab.id, { type: 'OPEN_REWARD_TASKS' });
+    chrome.tabs.executeScript({
+      file: 'content-scripts/open-reward-tasks.js',
+    });
   }
+
+  const tab = await getCurrentTab();
   if (tab && tab.url.includes('https://account.microsoft.com/rewards')) {
-      openRewardTasks();
+    openRewardTasks();
   } else {
     chrome.tabs.update({
       url: 'https://account.microsoft.com/rewards',

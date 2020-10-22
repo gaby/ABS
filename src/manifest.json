@@ -5,13 +5,13 @@
   "manifest_version": 2,
   "icons": { "16": "icons/icon16.png", "48": "icons/icon48.png", "128": "icons/icon128.png" },
   "content_scripts": [{
-    "matches": ["https://*.bing.com/*", "https://account.microsoft.com/rewards/*"],
+    "matches": ["https://*.bing.com/*"],
     "js": [
       "script-injector.js",
       "constants.js",
       "utils.js",
       "chrome-utils.js",
-      "content-script.js"
+      "content-scripts/main.js"
     ]
   }],
   "background": {
@@ -21,13 +21,13 @@
       "data.js",
       "query-templates.js",
       "chrome-utils.js",
-      "background/prefs.js",
-      "background/queries.js",
-      "background/reminder.js",
-      "background/spoof.js",
-      "background/search.js",
-      "background/schedule.js",
-      "background/messages.js"
+      "background-scripts/prefs.js",
+      "background-scripts/queries.js",
+      "background-scripts/reminder.js",
+      "background-scripts/spoof.js",
+      "background-scripts/search.js",
+      "background-scripts/schedule.js",
+      "background-scripts/messages.js"
     ],
     "persistent": true
   },
@@ -52,6 +52,7 @@
   "web_accessible_resources": ["window-variable-grabber.js"],
   "permissions": [
     "https://*.bing.com/*",
+    "https://account.microsoft.com/rewards/*",
     "webRequest",
     "webRequestBlocking",
     "tabs",
