@@ -31,6 +31,8 @@ const constants = Object.freeze({
     GET_SEARCH_COUNTS: 2, // popup => background script
     UPDATE_SEARCH_COUNTS: 3, // background script => popup
     CLEAR_SEARCH_COUNTS: 4, // background script => popup
+    CORRECT_ANSWER_RECEIVED: 5, // window-variable-grabber script => content script
+    OPEN_URL_IN_BACKGROUND: 6, // window-variable-grabber script => content script => background script
   }),
   REWARDS_URL: 'https://account.microsoft.com/rewards/',
   CORS_PROXY_URL: 'https://cors-anywhere-mikeyaworski.herokuapp.com/',

@@ -29,6 +29,13 @@ chrome.runtime.onMessage.addListener((msg, sender, cb) => {
       if (setSearchCounts) setSearchCounts();
       break;
     }
+    case constants.MESSAGE_TYPES.OPEN_URL_IN_BACKGROUND: {
+      chrome.tabs.create({
+        url: msg.url,
+        active: false,
+      });
+      break;
+    }
     default: break;
   }
 });

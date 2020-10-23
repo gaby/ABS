@@ -7,11 +7,19 @@
   "content_scripts": [{
     "matches": ["https://*.bing.com/*"],
     "js": [
-      "script-injector.js",
       "constants.js",
       "utils.js",
       "chrome-utils.js",
+      "content-scripts/script-injector.js",
+      "content-scripts/window-variable-grabber/injector.js",
       "content-scripts/main.js"
+    ]
+  }, {
+    "matches": ["https://account.microsoft.com/rewards/*"],
+    "js": [
+      "constants.js",
+      "content-scripts/script-injector.js",
+      "content-scripts/window-open-injection/injector.js"
     ]
   }],
   "background": {
@@ -49,7 +57,11 @@
       "description": "Start searches"
     }
   },
-  "web_accessible_resources": ["window-variable-grabber.js"],
+  "web_accessible_resources": [
+    "constants.js",
+    "content-scripts/window-variable-grabber/main.js",
+    "content-scripts/window-open-injection/main.js"
+  ],
   "permissions": [
     "https://*.bing.com/*",
     "https://account.microsoft.com/rewards/*",

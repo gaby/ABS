@@ -1,5 +1,5 @@
 let correctAnswer;
-document.addEventListener('CORRECT_ANSWER_RECEIVED', e => {
+document.addEventListener(constants.MESSAGE_TYPES.CORRECT_ANSWER_RECEIVED, e => {
   correctAnswer = e.detail;
 });
 

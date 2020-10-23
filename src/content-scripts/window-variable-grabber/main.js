@@ -15,7 +15,7 @@ function get(obj, path) {
 
 // grab the correct answer from the window object
 setInterval(() => {
-  document.dispatchEvent(new CustomEvent('CORRECT_ANSWER_RECEIVED', {
+  document.dispatchEvent(new CustomEvent(constants.MESSAGE_TYPES.CORRECT_ANSWER_RECEIVED, {
     detail: get(window, ['_w', 'rewardsQuizRenderInfo', 'correctAnswer']),
   }));
 }, 500);

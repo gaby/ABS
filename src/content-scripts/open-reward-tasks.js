@@ -13,12 +13,16 @@ function clickAll(selector, parent = document) {
 
 // scope this in a function so we can inject this script multiple times
 (() => {
-  const cards = [...document.querySelectorAll('mee-card')];
-  if (cards.length) {
-    cards.forEach(card => {
-      if (card.querySelector('.mee-icon-AddMedium')) {
-        clickAll('a.c-call-to-action', card);
-      }
-    });
-  }
+  // This timeout lets us queue our clicks until after the page has had time to inject window.open.
+  // This is only reproducible in Firefox as far as I'm aware.
+  setTimeout(() => {
+    const cards = [...document.querySelectorAll('mee-card')];
+    if (cards.length) {
+      cards.forEach(card => {
+        if (card.querySelector('.mee-icon-AddMedium')) {
+          clickAll('a.c-call-to-action', card);
+        }
+      });
+    }
+  }, 0);
 })();
