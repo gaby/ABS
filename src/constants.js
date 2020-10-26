@@ -38,9 +38,9 @@ const constants = Object.freeze({
   CORS_PROXY_URL: 'https://cors-anywhere-mikeyaworski.herokuapp.com/',
   DAILY_TRENDS_API: 'https://trends.google.com/trends/api/dailytrends?geo=US',
   NUM_DAILY_TREND_FETCHES: 4,
-  // TODO: add more user agents
+  // TODO: add more mobile user agents
   MOBILE_USER_AGENTS: Object.freeze([
-    'Mozilla/5.0 (Linux; Android 8.0; Pixel 2 Build/OPD3.170816.012) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.85 Mobile Safari/537.36 Edg/84.0.522.35',
+    'Mozilla/5.0 (Linux; Android 8.0; Pixel 2 Build/OPD3.170816.012) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Mobile Safari/537.36 Edg/86.0.622.51',
   ]),
-  EDGE_USER_AGENT: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.85 Safari/537.36 Edg/84.0.522.35',
+  EDGE_USER_AGENT: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36 Edg/86.0.622.51',
 });
