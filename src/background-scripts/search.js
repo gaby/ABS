@@ -6,7 +6,7 @@ function sendMessage(msg) {
 
 function setBadgeReminderWithCount(count) {
   chrome.browserAction.setBadgeText({ text: count.toString() }); // must be a string type
-  chrome.browserAction.setBadgeBackgroundColor({ color: constants.BADGE_COLOR });
+  chrome.browserAction.setBadgeBackgroundColor({ color: constants.BADGE_COLORS.COUNT });
 }
 
 function updateLastSearch() {

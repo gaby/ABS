@@ -1,6 +1,9 @@
 const constants = Object.freeze({
   ONE_DAY_MILLIS: 24 * 60 * 60 * 1000,
-  BADGE_COLOR: '#F41A22',
+  BADGE_COLORS: Object.freeze({
+    REMINDER: '#F41A22',
+    COUNT: '#2196F3',
+  }),
   BADGE_REMINDER_TEXT: '!',
   CLICK_DELAY: 500,
   DEFAULT_PREFERENCES: Object.freeze({

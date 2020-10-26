@@ -1,6 +1,6 @@
 function setBadgeReminder() {
   chrome.browserAction.setBadgeText({ text: constants.BADGE_REMINDER_TEXT });
-  chrome.browserAction.setBadgeBackgroundColor({ color: constants.BADGE_COLOR });
+  chrome.browserAction.setBadgeBackgroundColor({ color: constants.BADGE_COLORS.REMINDER });
 }
 
 /**
