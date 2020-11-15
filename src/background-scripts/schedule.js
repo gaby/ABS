@@ -1,5 +1,3 @@
-const schedulePrefs = {};
-
 function startSearchesInNewTab() {
   chrome.tabs.create({ active: false }, tab => {
     startSearches(tab.id);
@@ -24,42 +22,41 @@ function startSearchesInNewTab() {
 /**
  * Find the next scheduled search and then from then on, schedule every 24 hours.
  */
-let nextSearchTimeout;
-let searchScheduleInterval;
-function attemptScheduling() {
-  clearTimeout(nextSearchTimeout);
-  clearInterval(searchScheduleInterval);
+async function attemptScheduling() {
+  const {
+    scheduleSearches,
+    scheduledTime,
+    lastSearch,
+  } = await getStorage(['scheduleSearches', 'scheduledTime', 'lastSearch']);
 
-  if (!schedulePrefs.scheduleSearches) return;
-
-  // find the next scheduled search (some time within 24 hours)
-  // and then once that scheduled search executes, schedule searches on a 24 hour interval
-  const timeUntilTodaysScheduledHour = getDateFromTime(schedulePrefs.scheduledTime) - new Date();
-  const timeoutToScheduledHour = timeUntilTodaysScheduledHour < 0 ? constants.ONE_DAY_MILLIS + timeUntilTodaysScheduledHour : timeUntilTodaysScheduledHour;
-  nextSearchTimeout = setTimeout(() => {
-    startSearchesInNewTab();
-    searchScheduleInterval = setInterval(startSearchesInNewTab, constants.ONE_DAY_MILLIS);
-  }, timeoutToScheduledHour);
-
-  // scheduled time has passed and there wasn't already a search done today
-  // (e.g. they opened their browser for the day AFTER the scheduled time),
-  // so just do a search right now
-  const lastSearchWasToday = schedulePrefs.lastSearch - getMidnightDate() > 0;
-  if (!lastSearchWasToday && timeUntilTodaysScheduledHour < 0) {
-    // update lastSearch manually since we don't hook into the storage value, but
-    // we don't want to keep invoking new searches every time we change schedule prefs
-    schedulePrefs.lastSearch = Date.now();
-    startSearchesInNewTab();
+  if (!scheduleSearches) {
+    chrome.alarms.clear(constants.ALARMS.SCHEDULED_SEARCH);
+    return;
   }
+
+  const timeUntilTodaysScheduledHour = getDateFromTime(scheduledTime);
+  let when = timeUntilTodaysScheduledHour.getTime();
+  // there has already been a search completed today, so do the search tomorrow instead
+  if (lastSearch > getMidnightDate()) {
+    when += constants.ONE_DAY_MILLIS;
+  }
+  chrome.alarms.create(constants.ALARMS.SCHEDULED_SEARCH, {
+    when,
+    periodInMinutes: constants.ONE_DAY_MINS,
+  });
 }
 
 // whenever any of these storage values change, clear the old schedule and attempt to schedule searches in the future
-getStorage(['scheduleSearches', 'scheduledTime', 'lastSearch'], schedulePrefs).then(attemptScheduling);
-// don't hook into lastSearch since we don't care when it changes (we only care when it mounts)
 hookStorage(['scheduleSearches', 'scheduledTime'].map(key => ({
   key,
-  cb: value => {
-    schedulePrefs[key] = value;
-    attemptScheduling();
-  },
-})), schedulePrefs);
+  cb: attemptScheduling,
+})));
+
+chrome.alarms.onAlarm.addListener(alarm => {
+  if (alarm.name === constants.ALARMS.SCHEDULED_SEARCH) {
+    startSearchesInNewTab();
+  }
+});
+
+chrome.runtime.onInstalled.addListener(attemptScheduling);
+chrome.runtime.onStartup.addListener(attemptScheduling);

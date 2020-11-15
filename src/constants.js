@@ -1,10 +1,16 @@
 const constants = Object.freeze({
+  ONE_DAY_MINS: 24 * 60,
   ONE_DAY_MILLIS: 24 * 60 * 60 * 1000,
   BADGE_COLORS: Object.freeze({
     REMINDER: '#F41A22',
     COUNT: '#2196F3',
   }),
   BADGE_REMINDER_TEXT: '!',
+  ALARMS: Object.freeze({
+    REMINDER: 'reminder-alarm',
+    SCHEDULED_SEARCH: 'scheduled-search-alarm',
+    FETCH_DAILY_TRENDS: 'fetch-daily-trends-alarm',
+  }),
   CLICK_DELAY: 500,
   DEFAULT_PREFERENCES: Object.freeze({
     desktopIterations: 35,

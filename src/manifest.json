@@ -68,6 +68,7 @@
     "webRequest",
     "webRequestBlocking",
     "tabs",
+    "alarms",
     "storage"
   ]
 }

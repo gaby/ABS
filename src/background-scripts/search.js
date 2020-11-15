@@ -1,7 +1,5 @@
 function sendMessage(msg) {
-  if (activePort) {
-    activePort.postMessage(msg);
-  }
+  if (activePort) activePort.postMessage(msg);
 }
 
 function setBadgeReminderWithCount(count) {
@@ -10,30 +8,169 @@ function setBadgeReminderWithCount(count) {
 }
 
 function updateLastSearch() {
-  setStorage('lastSearch', Date.now()).then(updateReminderTimeout);
+  setStorage('lastSearch', Date.now());
 }
 
-
-// scoped globally so that we can return it when fetching from popup
-let counts = [0, 0, 0];
-let setSearchCounts;
+// store it in an object because eventually, we will be storing this information in local storage
+// and once that happens, it will be an object as well
+let currentSearchSettings = {
+  // currentSearchingTabId,
+  // platformSpoofing,
+  // desktopIterations,
+  // mobileIterations,
+  // overallCount,
+  // desktopCount,
+  // mobileCount,
+};
 let searchTimeout;
-let currentSearchingTabId;
 
 function stopSearches() {
+  currentSearchSettings = {};
   clearTimeout(searchTimeout);
-  currentSearchingTabId = null;
   clearBadge();
   sendMessage({ type: constants.MESSAGE_TYPES.CLEAR_SEARCH_COUNTS });
-  setSearchCounts = null;
   spoof(false);
   mobileSpoof(false);
 }
 
-function startSearches(tabId) {
+function setSearchCounts() {
+  const {
+    currentSearchingTabId,
+    overallCount,
+    desktopCount,
+    mobileCount,
+    desktopIterations,
+    mobileIterations,
+    platformSpoofing,
+  } = currentSearchSettings;
+  if (!currentSearchingTabId) {
+    sendMessage({ type: constants.MESSAGE_TYPES.CLEAR_SEARCH_COUNTS });
+    return;
+  }
+
+  const containsDesktop = platformSpoofing.includes('desktop');
+  const containsMobile = platformSpoofing.includes('mobile');
+  const desktopRemaining = desktopIterations - desktopCount;
+  const mobileRemaining = mobileIterations - mobileCount;
+
+  sendMessage({
+    type: constants.MESSAGE_TYPES.UPDATE_SEARCH_COUNTS,
+    numIterations: desktopIterations + mobileIterations,
+    overallCount,
+    containsDesktop,
+    containsMobile,
+    desktopRemaining,
+    mobileRemaining,
+  });
+}
+
+/**
+ * Actually redirects to perform search query.
+ */
+async function search(isMobile) {
+  await prefsLoaded;
+  if (!currentSearchSettings) return;
+
+  const {
+    desktopCount,
+    mobileCount,
+    currentSearchingTabId,
+  } = currentSearchSettings;
+
+  if (isMobile && mobileCount === 0) mobileSpoof(true);
+
+  return new Promise(async (resolve, reject) => {
+    const query = await getSearchQuery();
+    chrome.tabs.update(currentSearchingTabId, {
+      url: `https://bing.com/search?q=${query}`,
+    }, () => {
+      // we expect an error if there is the tab is closed, for example
+      if (chrome.runtime.lastError) return reject(chrome.runtime.lastError);
+
+      if (prefs.blitzSearch) {
+        // arbitrarily wait 500ms on the last mobile search before resolving
+        // so that there is a delay before disabling the mobile spoofing
+        // (otherwise the last search will occur after the spoofing is disabled)
+        const delay = (mobileCount === desktopCount && desktopCount > 0) ? 500 : 0;
+        setTimeout(resolve, delay);
+        return;
+      }
+
+      function listener(updatedTabId, info) {
+        if (currentSearchingTabId === updatedTabId && info.status === 'complete') {
+          resolve();
+          chrome.tabs.onUpdated.removeListener(listener);
+        }
+      }
+      chrome.tabs.onUpdated.addListener(listener);
+    });
+  });
+}
+
+/**
+ * Computes the data we need to make our searches, invokes the search function,
+ * and schedules another search in the future (after some delay).
+ */
+async function searchLoop(currentSearchingTabId) {
+  await prefsLoaded;
+
+  let {
+    platformSpoofing,
+    desktopIterations,
+    mobileIterations,
+    overallCount,
+    desktopCount,
+    mobileCount,
+  } = currentSearchSettings;
+
+  let currentDelay = Number(prefs.delay);
+  if (prefs.randomSearch) {
+    const minDelay = Number(prefs.randomSearchDelayMin);
+    const maxDelay = Number(prefs.randomSearchDelayMax);
+    currentDelay = random(minDelay, maxDelay);
+  }
+
+  try {
+    const isMobile = platformSpoofing === 'mobile-only' || (platformSpoofing === 'desktop-and-mobile' && overallCount >= desktopIterations);
+    await search(isMobile);
+
+    // This is to address the issue where you stop the searches while the page is loading (or start searches in another tab)
+    // and we are awaiting the search to complete. The timeout function is async, so even if the timeout has been cleared,
+    // once the promise finishes, it will invoke another search. So, we check after done waiting for if the search has completed.
+    if (currentSearchSettings.currentSearchingTabId !== currentSearchingTabId) return;
+
+    overallCount++;
+    if (isMobile) mobileCount++;
+    else desktopCount++;
+    Object.assign(currentSearchSettings, {
+      overallCount,
+      desktopCount,
+      mobileCount,
+    });
+
+    setSearchCounts();
+    setBadgeReminderWithCount(desktopIterations + mobileIterations - overallCount);
+
+    if (overallCount >= desktopIterations + mobileIterations) {
+      stopSearches();
+    } else {
+      // cannot use chrome.alarms since an alarm will fire, at most, every one minute
+      searchTimeout = setTimeout(() => searchLoop(currentSearchingTabId), currentDelay);
+    }
+  } catch (err) {
+    console.error(err.message);
+    stopSearches();
+  }
+}
+
+/**
+ * Computes/stores the search settings which will be used, then invokes the first search loop.
+ */
+async function startSearches(tabId) {
   stopSearches();
+
+  await prefsLoaded;
   updateLastSearch();
-  currentSearchingTabId = tabId;
 
   const { platformSpoofing } = prefs;
   const minInterations = Number(prefs.randomSearchIterationsMin);
@@ -59,100 +196,16 @@ function startSearches(tabId) {
     desktopIterations = 0;
   }
 
-  const numIterations = desktopIterations + mobileIterations;
+  Object.assign(currentSearchSettings, {
+    currentSearchingTabId: tabId,
+    platformSpoofing,
+    desktopIterations,
+    mobileIterations,
+    overallCount: 0,
+    desktopCount: 0,
+    mobileCount: 0,
+  });
 
-  // - redirects to search with a query
-  // - sends message over the port to switch to mobile spoofing once required
-  // - returns an array of overall search counts, desktop counts and mobile counts 
-  const search = (() => {
-    let overallCount = 0;
-    let desktopCount = 0;
-    let mobileCount = 0;
-    return isMobile => {
-      if (isMobile && mobileCount === 0) mobileSpoof(true);
-
-      if (isMobile) mobileCount++;
-      else desktopCount++;
-      overallCount++;
-
-      return new Promise((resolve, reject) => {
-        const query = getSearchQuery();
-        chrome.tabs.update(tabId, {
-          url: `https://bing.com/search?q=${query}`,
-        }, () => {
-          // we expect an error if there is the tab is closed, for example
-          if (chrome.runtime.lastError) return reject(chrome.runtime.lastError);
-
-          if (prefs.blitzSearch) {
-            // arbitrarily wait 500ms on the last mobile search before resolving
-            // so that there is a delay before disabling the mobile spoofing
-            // (otherwise the last search will occur after the spoofing is disabled)
-            const delay = mobileCount === desktopCount ? 500 : 0;
-            setTimeout(() => resolve([overallCount, desktopCount, mobileCount]), delay);
-            return;
-          }
-  
-          // an unfortunate solution, but we need to wait until the tab is loaded before resolving
-          // so that we don't kill the spoofing before the tab is loaded
-          // and for some reason, this listener is triggered multiple times with the same 'completed' status, so we need a flag
-          let resolved = false;
-          chrome.tabs.onUpdated.addListener((updatedTabId, info) => {
-            if (tabId === updatedTabId && info.status === 'complete' && !resolved) {
-              resolved = true;
-              resolve([overallCount, desktopCount, mobileCount]);
-            }
-          });
-        });
-      });
-    };
-  })();
-
-  setSearchCounts = () => {
-    const [overallCount, desktopCount, mobileCount] = counts;
-    const containsDesktop = platformSpoofing.includes('desktop');
-    const containsMobile = platformSpoofing.includes('mobile');
-    const desktopRemaining = desktopIterations - desktopCount;
-    const mobileRemaining = mobileIterations - mobileCount;
-    sendMessage({
-      type: constants.MESSAGE_TYPES.UPDATE_SEARCH_COUNTS,
-      numIterations,
-      overallCount,
-      containsDesktop,
-      containsMobile,
-      desktopRemaining,
-      mobileRemaining,
-    });
-  }
-
-  counts = [0, 0, 0];
-  setSearchCounts(...counts);
-
-  (async function searchLoop() {
-    let currentDelay = Number(prefs.delay);
-    if (prefs.randomSearch) {
-      const minDelay = Number(prefs.randomSearchDelayMin);
-      const maxDelay = Number(prefs.randomSearchDelayMax);
-      currentDelay = random(minDelay, maxDelay);
-    }
-
-    try {
-      const isMobile = platformSpoofing === 'mobile-only' || (platformSpoofing === 'desktop-and-mobile' && counts && counts[0] >= desktopIterations);
-      counts = await search(isMobile);
-
-      // This is to address the issue where you stop the searches while the page is loading (or start searches in another tab)
-      // and we are awaiting the search to complete. The timeout function is async, so even
-      // if the timeout has been cleared, once the promise finishes, it will invoke another search.
-      // So, we check after done waiting for if the search has completed.
-      if (currentSearchingTabId !== tabId) return;
-  
-      setSearchCounts(...counts);
-      setBadgeReminderWithCount(numIterations - counts[0]);
-  
-      if (counts[0] >= numIterations) stopSearches();
-      else searchTimeout = setTimeout(searchLoop, currentDelay);
-    } catch (err) {
-      console.error(err.message);
-      stopSearches();
-    }
-  })();
+  setSearchCounts();
+  searchLoop(tabId);
 }
