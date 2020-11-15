@@ -9,6 +9,12 @@ Firefox Addon: https://addons.mozilla.org/en-CA/firefox/addon/abs/
 
 <a href="https://www.buymeacoffee.com/mikeyaworski" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-green.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
+BTC Address:
+
+```
+3Cc3CmCbyzMu8g8zZSxAdRJydAyURGrWH7
+```
+
 ## Upcoming Features
 
 Nothing currently planned. Please open an issue if you have any ideas!

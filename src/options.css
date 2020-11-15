@@ -1,5 +1,5 @@
 body {
-  width: 300px;
+  width: 340px;
   background-color: #424242;
   color: white;
   padding: 18px;
@@ -9,12 +9,11 @@ body {
 
 hr {
   width: 100%;
-  max-width: 300px;
   margin-left: 0;
 }
 
 textarea {
-  width: 300px;
+  width: 100%;
   background: transparent;
   color: white;
 }
@@ -44,4 +43,14 @@ label {
 .text-secondary {
   color: #79D6B5;
   font-size: 0.9rem;
+}
+
+.btc-code {
+  background-color: #222222;
+  width: fit-content;
+  word-break: break-word;
+  margin-top: 5px;
+  padding: 10px;
+  border-radius: 10px;
+  text-align: center;
 }
