@@ -7,7 +7,7 @@
 function get(obj, path) {
   let result = obj;
   path.forEach(junction => {
-    if (!result) return null;
+    if (!result) return;
     result = result[junction];
   });
   return result;
