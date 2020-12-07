@@ -5,17 +5,17 @@ document.addEventListener(constants.MESSAGE_TYPES.CORRECT_ANSWER_RECEIVED, e => 
 
 const prefs = { ...constants.DEFAULT_PREFERENCES };
 
-function clickOption(selector, parent = document) {
-  const e = parent.querySelector(selector);
-  if (e && e.getAttribute('data-serpquery')) e.click();
-}
-
 function clickElement(e, checkVisibility = true) {
   if (!e) return;
   // e.offsetParent checks that the element (and its parents) do not have the style property 'display: none'
   // https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/offsetParent
   // this will break if e has style property 'position: fixed', but that shouldn't happen
   if (!checkVisibility || e.offsetParent) e.click();
+}
+
+function clickOption(selector, parent = document) {
+  const e = parent.querySelector(selector);
+  if (e && e.getAttribute('data-serpquery')) clickElement(e, true);
 }
 
 function click(selector, parent = document) {
