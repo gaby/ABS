@@ -12,6 +12,7 @@
       "chrome-utils.js",
       "content-scripts/script-injector.js",
       "content-scripts/window-variable-grabber/injector.js",
+      "content-scripts/quiz-answer-hash-function.js",
       "content-scripts/main.js"
     ]
   }, {

@@ -1,6 +1,8 @@
 let correctAnswer;
+let answerHashIV;
 document.addEventListener(constants.MESSAGE_TYPES.CORRECT_ANSWER_RECEIVED, e => {
-  correctAnswer = e.detail;
+  correctAnswer = e.detail.correctAnswer;
+  answerHashIV = e.detail.answerHashIV;
 });
 
 const prefs = { ...constants.DEFAULT_PREFERENCES };
@@ -39,15 +41,24 @@ function clickLoop() {
     // once the background is not hidden, that means the results are being shown.
     clickHidden('#OptionBackground00.b_hide');
   
-    // the correctAnswer variable doesn't work anymore for "this or that"
-    // because the window variable doesn't have the same value as the data-option
+    // does not apply to this/that quizzes since the correct answer is hashed for that
     clickOption(`#currentQuestionContainer .btOptionCard[data-option="${correctAnswer}"]`);
 
+    // for this/that quizzes:
     // either guess randomly or attempt the correct guess (only works on mobile view)
     // but at least give the option to guess randomly instead of forcing it to be correct
     // since this is a risky thing to get 100% correct
-    if (prefs.randomGuesses) clickOption('#currentQuestionContainer .btOptionCard');
-    else click('.bt_correctOp'); // only works on mobile view
+    if (prefs.randomGuesses) {
+      // not actually random - just picks the first one
+      clickOption('#currentQuestionContainer .btOptionCard');
+    } else {
+      // only works on mobile view
+      click('.bt_correctOp');
+      // for desktop view, compare the hashes of options to the hash of the correct answer we got from the window object
+      const options = [...document.querySelectorAll('#currentQuestionContainer .btOptionCard')];
+      const correctOption = options.find(option => correctAnswer && correctAnswer === quizAnswerHashFunction(answerHashIV, option.dataset.option));
+      clickElement(correctOption);
+    }
 
   
     // for some reason, testYourSmartsOption.onmouseup returns null
