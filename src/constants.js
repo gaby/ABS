@@ -44,7 +44,6 @@ const constants = Object.freeze({
     OPEN_URL_IN_BACKGROUND: 6, // window-variable-grabber script => content script => background script
   }),
   REWARDS_URL: 'https://account.microsoft.com/rewards/',
-  CORS_PROXY_URL: 'https://cors-anywhere-mikeyaworski.herokuapp.com/',
   DAILY_TRENDS_API: 'https://trends.google.com/trends/api/dailytrends?geo=US',
   NUM_DAILY_TREND_FETCHES: 4,
   // TODO: add more mobile user agents

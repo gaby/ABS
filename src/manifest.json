@@ -66,6 +66,7 @@
   "permissions": [
     "https://*.bing.com/*",
     "https://account.microsoft.com/rewards/*",
+    "https://trends.google.com/*",
     "webRequest",
     "webRequestBlocking",
     "tabs",
