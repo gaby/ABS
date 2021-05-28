@@ -60,20 +60,7 @@ function clickLoop() {
       clickElement(correctOption);
     }
 
-  
-    // for some reason, testYourSmartsOption.onmouseup returns null
-    // as a workaround, parse the search URL from the attribute and manually go to it
-    const testYourSmartsOption = document.querySelector('#ListOfQuestionAndAnswerPanes div[id^=QuestionPane]:not(.wk_hideCompulsary) .wk_paddingBtm');
-    if (testYourSmartsOption) {
-      let smartsLink = testYourSmartsOption.getAttribute('onmouseup');
-      if (smartsLink) {
-        const startIndex = smartsLink.indexOf('/search');
-        if (startIndex !== -1) {
-          smartsLink = smartsLink.substring(startIndex, smartsLink.length - 2);
-          window.location.href = `https://bing.com${smartsLink}`;
-        }
-      }
-    }
+    click('#ListOfQuestionAndAnswerPanes div[id^=QuestionPane]:not(.wk_hideCompulsary) .wk_choicesInstLink');
   
     // this actually might not be necessary, but we can leave it in anyway
     click('#ListOfQuestionAndAnswerPanes div[id^=AnswerPane]:not(.b_hide) input[type=submit]');
