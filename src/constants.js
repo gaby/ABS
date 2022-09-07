@@ -43,7 +43,7 @@ const constants = Object.freeze({
     CORRECT_ANSWER_RECEIVED: 5, // window-variable-grabber script => content script
     OPEN_URL_IN_BACKGROUND: 6, // window-variable-grabber script => content script => background script
   }),
-  REWARDS_URL: 'https://account.microsoft.com/rewards/',
+  REWARDS_URL: 'https://rewards.bing.com/',
   DAILY_TRENDS_API: 'https://trends.google.com/trends/api/dailytrends?geo=US',
   NUM_DAILY_TREND_FETCHES: 4,
   // TODO: add more mobile user agents
