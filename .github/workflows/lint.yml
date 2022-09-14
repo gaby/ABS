@@ -13,6 +13,14 @@ jobs:
       - name: "Checkout"
         uses: actions/checkout@v3
 
+      - name: "web-ext build"
+        id: web-ext-build
+        uses: kewisch/action-web-ext@v1
+        with:
+          cmd: build
+          source: src
+          filename: "{name}-{version}.xpi"
+
       - name: "web-ext lint"
         uses: kewisch/action-web-ext@v1
         with:
