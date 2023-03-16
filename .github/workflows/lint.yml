@@ -1,0 +1,24 @@
+name: "Lint"
+on:
+  push:
+    branches:
+      - master
+      - main
+  pull_request:
+
+jobs:
+  lint:
+    name: "Lint"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v3
+
+      - name: "web-ext lint"
+        uses: kewisch/action-web-ext@v1
+        env:
+          GITHUB_TOKEN: "dummy" 
+        with:
+          cmd: lint
+          source: src
+          channel: unlisted
