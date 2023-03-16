@@ -16,6 +16,8 @@ jobs:
 
       - name: "web-ext lint"
         uses: kewisch/action-web-ext@v1
+        env:
+          GITHUB_TOKEN: "dummy" 
         with:
           cmd: lint
           source: src
